@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from database import db_dependency
 from models import RegisterModel, CurrentUser, GoogleToken
-from auth import auth_service
+from services import auth_service
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 

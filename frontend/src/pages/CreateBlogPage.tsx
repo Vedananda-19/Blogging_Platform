@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlogEditor from "../components/BlogEditor";
 import api from "../apis/api";
 import { toast } from "react-toastify";
@@ -9,13 +9,14 @@ import { useMemo } from "react";
 const CreateBlogPage = () => {
     const [blogTitle, setBlogTitle] = useState("");
     const [errorMsg,setErrorMsg] = useState("");
-    
 
     const editor = useEditor({
         extensions: [StarterKit],
         content:`<h5>Write your blog over here...</h5>`,
     });
     const providerValue = useMemo(() => ({ editor }), [editor]);
+
+    useEffect(()=>{setErrorMsg("")},[])
 
     const handleCreate = async() => {
         if (!blogTitle) {
@@ -27,9 +28,8 @@ const CreateBlogPage = () => {
             content:JSON.stringify(editor.getJSON(),null,2)
         }
         try{
-            // const response = await api.post("/blog/create",blog)
-            // toast(response.data.message)
-            toast("Added Successfully!")
+            const response = await api.post("/blog/create",blog)
+            toast(response.data.message)
         }
         catch(error:any){
             toast(error.response?.data?.detail || "An Error Occured")
@@ -37,6 +37,7 @@ const CreateBlogPage = () => {
         finally{
             setBlogTitle("")
             editor.commands.setContent("")
+            setErrorMsg("")
         }
     };
     return (

@@ -5,7 +5,6 @@ import {
     useEditorState,
 } from "@tiptap/react";
 import { FloatingMenu, BubbleMenu } from "@tiptap/react/menus";
-import { useMemo } from "react";
 
 const BlogEditor = () => {
     const {editor} = useCurrentEditor()

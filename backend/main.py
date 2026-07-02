@@ -4,7 +4,9 @@ from dotenv import load_dotenv
 
 from database import Base, engine
 import models  # registers the tables on Base
-from auth.auth_router import auth_router
+from routes.auth_router import auth_router
+from routes.blog_router import blog_router
+from routes.user_router import user_router
 
 load_dotenv()
 
@@ -21,6 +23,8 @@ app.add_middleware(
     allow_credentials=True,
 )
 app.include_router(auth_router)
+app.include_router(blog_router)
+app.include_router(user_router)
 
 
 @app.get("/")
