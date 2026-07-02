@@ -41,7 +41,7 @@ def hash_token(token:str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 def create_access_token(user:Users):
-    expiry = datetime.now(timezone.utc) + timedelta(minutes=15)
+    expiry = datetime.now(timezone.utc) + timedelta(minutes=1)
     encode_data = {'id':user.id,'sub':user.username,'exp':expiry}
     token : str = jwt.encode(encode_data,JWT_SECRET_KEY,algorithm=ALGORITHM)
     return {"access_token":token,"token_type":"bearer"}
@@ -126,7 +126,7 @@ def logout_user(refresh_token:str,db:Session,response:Response,device:str):
 def create_google_user(db:Session,google_id:str,email:str,username:str):
     usernames_set = set(get_usernames_list(db))
     new_username = username
-    i=0
+    i=1
     while new_username in usernames_set:
         new_username = f"{username}{i}"
         i+=1

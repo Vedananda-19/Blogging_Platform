@@ -22,8 +22,11 @@ function HomePage() {
         <div className="routeState">
             <h3>Welcome{user?.username ? `, ${user.username}` : ""}</h3>
             <p>You are signed in.</p>
-            <button className="secondaryButton" onClick={handleLogout}>
+            <button className="primaryButton" onClick={handleLogout}>
                 Logout
+            </button>
+            <button className="primaryButton" onClick={() => navigate("/create")}>
+                Create Blog
             </button>
         </div>
     )
