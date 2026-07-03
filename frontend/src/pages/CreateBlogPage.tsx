@@ -5,10 +5,12 @@ import { toast } from "react-toastify";
 import StarterKit from "@tiptap/starter-kit";
 import { useEditor, EditorContext} from "@tiptap/react";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CreateBlogPage = () => {
     const [blogTitle, setBlogTitle] = useState("");
     const [errorMsg,setErrorMsg] = useState("");
+    const navigate = useNavigate();
 
     const editor = useEditor({
         extensions: [StarterKit],
@@ -57,6 +59,7 @@ const CreateBlogPage = () => {
             </div>
             {errorMsg && <p>{errorMsg}</p>}
             <button onClick={handleCreate}>Save Blog</button>
+            <button onClick={()=>navigate("/")}>Home</button>
         </div>
     );
 };

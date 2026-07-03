@@ -230,3 +230,51 @@ input::placeholder { color: var(--color-text-secondary); }
   border-color: var(--color-brand);
   color: var(--color-brand-hover);
 }
+
+/* ============================================================
+   BLOGS PAGE
+   ============================================================ */
+
+.blogList {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 680px;
+  margin-top: 1rem;
+}
+
+.blogCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .85rem;
+  padding: 1.5rem;
+  text-align: left;
+  box-shadow: var(--shadow-card);
+}
+
+.blogCard h3 { color: var(--color-text-primary); margin-bottom: .35rem; }
+
+.blogMeta {
+  color: var(--color-text-secondary);
+  font-size: .85rem;
+  margin-bottom: .75rem;
+}
+
+.blogContent {
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+.blogContent p { margin-bottom: .75rem; }
+.blogContent h1, .blogContent h2, .blogContent h3 { margin: .75rem 0 .5rem; }
+.blogContent ul, .blogContent ol { margin: .5rem 0 .75rem 1.25rem; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pagination span { color: var(--color-text-secondary); font-size: .9rem; }

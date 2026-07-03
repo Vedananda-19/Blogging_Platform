@@ -13,6 +13,7 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -20,4 +21,5 @@ def get_db():
     finally:
         db.close()
 
-db_dependency = Annotated[Session,Depends(get_db)]
+
+db_dependency = Annotated[Session, Depends(get_db)]

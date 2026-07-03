@@ -1,5 +1,4 @@
 import {
-    useEditor,
     EditorContent,
     useCurrentEditor,
     useEditorState,
@@ -10,7 +9,7 @@ const BlogEditor = () => {
     const {editor} = useCurrentEditor()
 
     //A Selected editor object derived from object to avoid unnecessary re-renders
-    const editorState = useEditorState({editor/*When it changes*/,selector:({editor}) => {
+    const editorState = useEditorState({editor,selector:({editor}) => {
         if (!editor) return null
         return {
             isEditable: editor.isEditable,

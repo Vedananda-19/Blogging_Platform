@@ -28,6 +28,9 @@ function HomePage() {
             <button className="primaryButton" onClick={() => navigate("/create")}>
                 Create Blog
             </button>
+            <button className="primaryButton" onClick={() => navigate("/blogs")}>
+                View Blogs
+            </button>
         </div>
     )
 }
