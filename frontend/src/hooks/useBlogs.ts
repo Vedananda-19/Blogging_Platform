@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import api from "../apis/api"
 
 type Blog = {
@@ -12,20 +12,24 @@ type Blog = {
 }
 
 type PageData = {
-  page: number
-  page_count: number
+  total_count: number
   blogs: Blog[]
+  hasMore: boolean
+  next_cursor: string|null
 }
 
-const useBlogs = (searchParams:URLSearchParams,filter:boolean = false) => {
-  const page = searchParams.get("page") ?? "1"
+const useBlogs = (searchParams:URLSearchParams) => {
   const limit = searchParams.get("limit") ?? "10"
-  return useQuery({
-    queryKey:["blogs",page,limit,filter],
-    queryFn:async():Promise<PageData> => {
-      const response = await api.get("/blog/blogs",{params:{page,limit}})
+  const search = searchParams.get("search") || ""
+  const qkey = ["blogs",limit,search]
+  return useInfiniteQuery({
+    queryKey:qkey,
+    queryFn:async({pageParam}:any):Promise<PageData> => {
+      const response = await api.get("/blog/blogs",{params:{cursor:pageParam,limit,search}})
       return response.data
-    }
+    },
+    initialPageParam:null,
+    getNextPageParam:(lastPage) => lastPage.hasMore ? (lastPage.next_cursor) : undefined
   })
 }
 
