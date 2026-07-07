@@ -3,7 +3,7 @@ import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import useBlogs from "../hooks/useBlogs";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const BlogsPage = () => {
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ const BlogsPage = () => {
         isFetchingNextPage,
         hasNextPage,
     } = useBlogs(searchParams);
-    const { likeMutationResult, dislikeMutationResult } = useUpdateBlogs(searchParams);
+    const { likeMutationResult, dislikeMutationResult } = useUpdateBlogs();
     const { mutateAsync: likeBlog } = likeMutationResult;
     const { mutateAsync: dislikeBlog } = dislikeMutationResult;
 
