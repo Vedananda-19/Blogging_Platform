@@ -8,6 +8,7 @@ from database import db_dependency
 from jose import jwt, JWTError, ExpiredSignatureError
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from cloudinary.uploader import upload
 from dotenv import load_dotenv
 import hashlib, hmac
 import os
@@ -163,15 +164,35 @@ def logout_user(refresh_token: str, db: Session, response: Response, device: str
     return {"message": "Logged Out Successfully"}
 
 
-def create_google_user(db: Session, google_id: str, email: str, username: str):
+def create_google_user(
+    db: Session, google_id: str, email: str, username: str, picture: str
+):
+    # Creating unique username
     usernames_set = set(get_usernames_list(db))
     new_username = username
     i = 1
     while new_username in usernames_set:
         new_username = f"{username}{i}"
         i += 1
+
+    # Uploading Profile Picture to Cloudinary (best-effort: a missing or failed
+    # image upload must not block account creation)
+    image_url = image_id = None
+    if picture:
+        try:
+            uploaded_image = upload(picture)
+            image_id = uploaded_image["public_id"]
+            image_url = uploaded_image["secure_url"]
+        except Exception:
+            pass
+
     new_user = Users(
-        username=new_username, email=email, google_id=google_id, auth_provider="google"
+        username=new_username,
+        email=email,
+        google_id=google_id,
+        auth_provider="google",
+        photo_url=image_url,
+        photo_id=image_id,
     )
     db.add(new_user)
     db.commit()
@@ -188,11 +209,12 @@ def login_with_google(response: Response, google_token: str, db: Session, device
         raise HTTPException(401, "Invalid Google Token")
     google_id = id_info["sub"]
     email: str = id_info.get("email")
-    username = id_info.get("name") or email.split("@")[0]
+    username = id_info.get("name") or (email.split("@")[0] if email else "user")
+    profile_picture = id_info.get("picture")
 
     user = db.query(Users).filter(Users.google_id == google_id).first()
     if not user:
-        user = create_google_user(db, google_id, email, username)
+        user = create_google_user(db, google_id, email, username, profile_picture)
 
     new_refresh_token = create_refresh_token(user, db, device)
     set_refresh_cookie(response, new_refresh_token)

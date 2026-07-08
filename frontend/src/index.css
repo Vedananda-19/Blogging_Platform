@@ -250,9 +250,35 @@ input::placeholder { color: var(--color-text-secondary); }
   padding: 1.5rem;
   text-align: left;
   box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+
+.blogCard:hover {
+  border-color: var(--color-brand);
+  transform: translateY(-2px);
 }
 
 .blogCard h3 { color: var(--color-text-primary); margin-bottom: .35rem; }
+
+/* Clamped, fixed-height preview on the list; full content lives on the detail page */
+.blogPreview {
+  position: relative;
+  max-height: 6.5rem;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.blogPreview::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2.5rem;
+  background: linear-gradient(transparent, var(--color-surface));
+}
+
+.blogPreview * { margin: 0 0 .4rem; font-size: .95rem; }
 
 .blogMeta {
   color: var(--color-text-secondary);
@@ -278,3 +304,279 @@ input::placeholder { color: var(--color-text-secondary); }
 }
 
 .pagination span { color: var(--color-text-secondary); font-size: .9rem; }
+
+/* Author row + card actions */
+.blogAuthor {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .75rem;
+}
+
+.blogAuthor .blogMeta { margin-bottom: 0; }
+
+.authorPhoto {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-brand-subtle);
+  border: 1px solid var(--color-border-soft);
+  overflow: hidden;
+}
+
+/* Without this the <img> renders at natural size and is clipped to a sliver */
+.authorPhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.blogActions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--color-border-inner);
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border-radius: .5rem;
+  padding: .4rem .7rem;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.actionButton:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-brand);
+  color: var(--color-brand-hover);
+}
+
+/* Highlighted when the current user has liked / disliked / saved / commented */
+.actionButton.active {
+  background: var(--color-brand-subtle);
+  border-color: var(--color-brand);
+  color: var(--color-brand-hover);
+}
+
+.saveButton { margin-left: auto; }
+
+.loadSentinel { height: 1px; }
+
+.blogControls {
+  display: flex;
+  gap: .6rem;
+  width: 100%;
+  max-width: 680px;
+  margin-top: 1rem;
+}
+
+.blogControls input {
+  flex: 1;
+  border: 1px solid var(--color-border-soft);
+  border-radius: .5rem;
+  padding: .55rem .75rem;
+}
+
+.blogControls input:focus { outline: none; border-color: var(--color-brand); }
+
+.blogControls select {
+  border: 1px solid var(--color-border-soft);
+  border-radius: .5rem;
+  padding: .55rem .6rem;
+}
+
+/* ============================================================
+   BLOG DETAIL PAGE
+   ============================================================ */
+
+.blogDetail {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  text-align: left;
+}
+
+.blogDetail h1 {
+  color: var(--color-text-primary);
+  font-size: 2rem;
+  margin: 1rem 0 .5rem;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.detailActions {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+}
+
+/* ============================================================
+   CREATE BLOG PAGE
+   ============================================================ */
+
+.createPage {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.createHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.createHeader h1 { color: var(--color-text-primary); font-size: 1.6rem; }
+
+.createHeaderActions { display: flex; gap: .6rem; }
+
+.titleInput {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 1.9rem;
+  font-weight: 700;
+  padding: .5rem 0;
+}
+
+.titleInput:focus { outline: none; border-color: var(--color-brand); }
+.titleInput::placeholder { color: var(--color-text-secondary); opacity: .6; }
+
+.editorWrap {
+  border: 1px solid var(--color-border);
+  border-radius: .75rem;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.createFooter {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-secondary);
+  font-size: .8rem;
+}
+
+/* ---- Editor shell + toolbar ---- */
+.editorToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .15rem;
+  padding: .5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-page-bg);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tbButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: .4rem;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 1rem;
+  transition: background .12s, color .12s, border-color .12s;
+}
+
+.tbButton:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.tbButton.tbActive {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand-hover);
+  border-color: var(--color-brand);
+}
+
+.tbButton:disabled { opacity: .35; cursor: not-allowed; }
+
+.tbDivider {
+  width: 1px;
+  height: 1.3rem;
+  background: var(--color-border-soft);
+  margin: 0 .3rem;
+}
+
+.editorContent {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ---- ProseMirror content typography ---- */
+.editorContent .tiptap {
+  min-height: 320px;
+  padding: 1.25rem;
+  color: var(--color-text-primary);
+  line-height: 1.7;
+  outline: none;
+}
+
+.editorContent .tiptap:focus { outline: none; }
+.editorContent .tiptap > * + * { margin-top: .75rem; }
+.editorContent .tiptap h1 { font-size: 1.7rem; font-weight: 700; }
+.editorContent .tiptap h2 { font-size: 1.4rem; font-weight: 700; }
+.editorContent .tiptap h3 { font-size: 1.15rem; font-weight: 700; }
+.editorContent .tiptap ul,
+.editorContent .tiptap ol { padding-left: 1.4rem; }
+.editorContent .tiptap blockquote {
+  border-left: 3px solid var(--color-brand);
+  padding-left: 1rem;
+  color: var(--color-text-secondary);
+}
+.editorContent .tiptap code {
+  background: var(--color-brand-subtle);
+  padding: .1rem .35rem;
+  border-radius: .3rem;
+  font-size: .9em;
+}
+.editorContent .tiptap pre {
+  background: var(--color-page-bg);
+  border: 1px solid var(--color-border);
+  border-radius: .5rem;
+  padding: .85rem 1rem;
+  overflow-x: auto;
+}
+.editorContent .tiptap pre code { background: none; padding: 0; }
+.editorContent .tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-border-soft);
+  margin: 1rem 0;
+}
+
+/* Placeholder (shown on empty editor) */
+.editorContent .tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-secondary);
+  opacity: .55;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

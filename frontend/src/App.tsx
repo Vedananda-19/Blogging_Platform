@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import CreateBlogPage from "./pages/CreateBlogPage";
 import BlogsPage from "./pages/BlogsPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
             {
                 path: "/blogs",
                 element: <BlogsPage />,
+            },
+            {
+                path: "/blogs/:id",
+                element: <BlogDetailPage />,
             },
         ],
     },

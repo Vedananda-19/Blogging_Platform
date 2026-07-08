@@ -9,6 +9,7 @@ from models import (
     BlogLikes,
     BlogComments,
     CommentLikes,
+    BlogSaves,
 )
 from fastapi import HTTPException
 from datetime import datetime
@@ -23,19 +24,34 @@ def create_blog(blogData: CreateBlogModel, db: Session, user: CurrentUser):
     return {"message": "Blog Added Successfully"}
 
 
-def get_blogs(cursor: datetime | None, limit: int, search: str, db: Session):
+def get_blogs(cursor: datetime | None, limit: int, search: str, sort: str, db: Session):
+
+    #Querying
     blogs_query = db.query(Blogs)
 
+    #Filtering
     blogs_query = blogs_query.filter(
         or_(Blogs.title.ilike(f"%{search}%"), Blogs.content.ilike(f"%{search}%"))
     )
+
+    #Counting
     total_blogs = blogs_query.count()
 
+    #Pagination
     blogs_query = (
         blogs_query.filter(Blogs.created_at < cursor) if cursor else blogs_query
     )
-    blogs = blogs_query.order_by(Blogs.created_at.desc()).limit(limit).all()
 
+    #Sorting
+    if sort=="top":
+        blogs_query = blogs_query.order_by((Blogs.liked_count-Blogs.disliked_count).desc())
+    else:
+        blogs_query = blogs_query.order_by(Blogs.created_at.desc())
+
+    #Limiting
+    blogs = blogs_query.limit(limit).all()
+
+    #Getting Next Cursor
     next_cursor = blogs[-1].created_at if blogs else None
 
     return PaginatedBlogs(
@@ -92,6 +108,19 @@ def dislike_blog(blog_id: int, db: Session, user: CurrentUser):
         return {"message": "Disliked Blog"}
 
 
+def save_blog(blog_id: str, db: Session, user: CurrentUser):
+    saved = db.get(BlogSaves, (blog_id, user.user_id))
+    if saved:
+        db.delete(saved)
+        db.commit()
+        return {"message": "Save status removed"}
+    else:
+        new_save = BlogSaves(blog_id=blog_id, user_id=user.user_id)
+        db.add(new_save)
+        db.commit()
+    return {"message": "Saved Blog"}
+
+
 def comment_on_blog(blog_id: str, comment: str, db: Session, user: CurrentUser):
     blog_comment = BlogComments(blog_id=blog_id, user_id=user.user_id, comment=comment)
     db.add(blog_comment)
@@ -125,3 +154,10 @@ def get_blog_comments(
     pages = p + 1 if total_count and total_count % limit != 0 else p
 
     return {"comments": comments, "comment_count": total_count, "page_count": pages}
+
+
+def get_blog(blog_id: str, db: Session):
+    blog = db.get(Blogs, blog_id)
+    if not blog:
+        raise HTTPException(404, "Blog not found")
+    return BlogOut.model_validate(blog)

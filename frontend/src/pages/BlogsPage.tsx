@@ -1,8 +1,15 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
+import {
+    LuThumbsUp,
+    LuThumbsDown,
+    LuBookmark,
+    LuMessageCircle,
+} from "react-icons/lu";
 import useBlogs from "../hooks/useBlogs";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
+import useUserBlogs from "../hooks/useUserBlogs";
 import { useEffect, useRef } from "react";
 
 const BlogsPage = () => {
@@ -18,14 +25,16 @@ const BlogsPage = () => {
         isFetchingNextPage,
         hasNextPage,
     } = useBlogs(searchParams);
-    const { likeMutationResult, dislikeMutationResult } = useUpdateBlogs();
+
+    const { likeMutationResult, dislikeMutationResult, saveMutationResult } =
+        useUpdateBlogs();
     const { mutateAsync: likeBlog } = likeMutationResult;
     const { mutateAsync: dislikeBlog } = dislikeMutationResult;
+    const { mutateAsync: saveBlog } = saveMutationResult;
 
-    // Kept for upcoming URL-driven controls (sort/filter/limit). Remove the
-    // @ts-ignore once it's wired to the UI (noUnusedLocals flags it until then).
-    // @ts-ignore - intentionally unused for now
-    const updateParams = (name: string, value: string) => {
+    const { likedSet, dislikedSet, savedSet, commentedSet } = useUserBlogs();
+
+    const updateParams = (name: string, value?: string) => {
         setSearchParams((prev) => {
             const params = new URLSearchParams(prev);
             if (value) {
@@ -68,12 +77,19 @@ const BlogsPage = () => {
             <button className="secondaryButton" onClick={() => navigate("/")}>
                 Back Home
             </button>
-            <div>
+            <div className="blogControls">
                 <input
                     value={searchParams.get("search") || ""}
                     placeholder="Search posts..."
-                    onChange={(e) => updateParams("search",e.target.value)}
+                    onChange={(e) => updateParams("search", e.target.value)}
                 />
+                <select
+                    value={searchParams.get("sort") || "recent"}
+                    onChange={(e) => updateParams("sort", e.target.value)}
+                >
+                    <option value="recent">Recent</option>
+                    <option value="top">Top</option>
+                </select>
             </div>
 
             {isLoading && <p>Loading blogs...</p>}
@@ -85,38 +101,65 @@ const BlogsPage = () => {
             <div className="blogList">
                 {data?.pages.map((page) =>
                     page.blogs.map((blog) => (
-                        <div className="blogCard" key={blog.id}>
+                        <div
+                            className="blogCard"
+                            key={blog.id}
+                            onClick={() => navigate(`/blogs/${blog.id}`)}
+                        >
                             <h3>{blog.title}</h3>
-                            <p className="blogMeta">by {blog.author}</p>
+                            <div className="blogAuthor">
+                                <div className="authorPhoto">
+                                    <img
+                                        src={blog.profile_picture || "/default_pfp.png"}
+                                        alt="pfp"
+                                    />
+                                </div>
+                                <p className="blogMeta">by {blog.author_name}</p>
+                            </div>
                             <div
-                                className="blogContent"
+                                className="blogPreview"
                                 dangerouslySetInnerHTML={{
                                     __html: renderContent(blog.content),
                                 }}
                             />
-                            <span>
+                            <div
+                                className="blogActions"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <button
-                                    onClick={() => {
-                                        likeBlog(blog.id);
-                                    }}
+                                    className={`actionButton${likedSet.has(blog.id) ? " active" : ""}`}
+                                    onClick={() => likeBlog(blog.id)}
                                 >
-                                    Like
+                                    <LuThumbsUp />
+                                    <span>{blog.liked_count}</span>
                                 </button>
-                                <p>{blog.liked_count}</p>
                                 <button
-                                    onClick={() => {
-                                        dislikeBlog(blog.id);
-                                    }}
+                                    className={`actionButton${dislikedSet.has(blog.id) ? " active" : ""}`}
+                                    onClick={() => dislikeBlog(blog.id)}
                                 >
-                                    Dislike
+                                    <LuThumbsDown />
+                                    <span>{blog.disliked_count}</span>
                                 </button>
-                                <p>{blog.disliked_count}</p>
-                            </span>
+                                <button
+                                    className={`actionButton${commentedSet.has(blog.id) ? " active" : ""}`}
+                                    title="Comments"
+                                >
+                                    <LuMessageCircle />
+                                    <span>{blog.comment_count}</span>
+                                </button>
+                                <button
+                                    className={`actionButton saveButton${savedSet.has(blog.id) ? " active" : ""}`}
+                                    title="Save"
+                                    onClick={() => saveBlog(blog.id)}
+                                >
+                                    <LuBookmark />
+                                </button>
+                            </div>
                         </div>
                     )),
                 )}
                 {isFetchingNextPage && <p>fetching...</p>}
-                <div ref={bottomRef}>loading div...</div>
+                <div ref={bottomRef} className="loadSentinel" />
             </div>
         </div>
     );

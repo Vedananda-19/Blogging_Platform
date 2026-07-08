@@ -27,6 +27,8 @@ class Users(Base):
     google_id = Column(String, unique=True, nullable=True)
     email = Column(String, unique=True, nullable=True)
     auth_provider = Column(String)
+    photo_url = Column(String, nullable=True)
+    photo_id = Column(String, nullable=True)
 
     blogs = relationship("Blogs", back_populates="author")
     liked_blogs = relationship("BlogLikes")
@@ -47,9 +49,6 @@ class Blogs(Base):
     title = Column(String)
     content = Column(String)
     user_id = Column(String, ForeignKey("users.id"))
-    # Python-side default: stores microsecond precision so the value matches
-    # SQLAlchemy's bind format during keyset (cursor) comparisons. func.now()
-    # stores only second precision, which breaks the boundary comparison.
     created_at = Column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -64,6 +63,20 @@ class Blogs(Base):
 
     author = relationship("Users", back_populates="blogs")
     likes = relationship("BlogLikes")
+
+    @property
+    def author_name(self):
+        return self.author.username
+
+    @property
+    def profile_picture(self):
+        return self.author.photo_url
+
+class BlogSaves(Base):
+    __tablename__ = "blog_saves"
+
+    blog_id = Column(String,ForeignKey("blogs.id"),primary_key=True)
+    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
 
 
 class BlogLikes(Base):
@@ -93,7 +106,7 @@ class CommentLikes(Base):
 
 
 # Validation Models - Pydantic validation models when routes recieve data
-# (important and useful when sending data from frontend)
+# (very useful and almost necessary when sending data to fastapi)
 
 
 class RegisterModel(BaseModel):
@@ -124,7 +137,6 @@ class CurrentUser(BaseModel):
 # Output Models - Pydantic models to validate data sent to client
 # (used for better serialization)
 
-
 class BlogOut(BaseModel):
     model_config = {"from_attributes": True}
 
@@ -136,25 +148,17 @@ class BlogOut(BaseModel):
     liked_count: int
     disliked_count: int
     comment_count: int
-    author: str
-
-    @field_validator("author", mode="before")
-    @classmethod
-    def author_username(cls, value):
-        return value.username
+    author_name: str
+    profile_picture: str | None = None
 
     @field_serializer("created_at", "updated_at")
     def as_utc(self, dt: datetime) -> str:
-        # Stored value is naive UTC (SQLite drops tzinfo); stamp +00:00 so the
-        # client can parse it unambiguously instead of treating it as local time.
         return dt.replace(tzinfo=timezone.utc).isoformat()
 
 
 class PaginatedBlogs(BaseModel):
     blogs: list[BlogOut]
     total_count: int
-    # NOTE: next_cursor stays naive on purpose — it round-trips back as the
-    # `cursor` query param and must match the naive stored created_at.
     next_cursor: datetime | None = None
     hasMore: bool
 
