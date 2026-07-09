@@ -74,19 +74,16 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
 
     const chain = () => editor.chain().focus();
 
-    const [imageURL, setImageURL] = useState("");
     const [uploadDisplay, setUploadDisplay] = useState(false);
-
-    useEffect(() => {
-        imageURL && chain().setImage({ src: imageURL }).run();
-    }, [imageURL]);
 
     return (
         <div className="editorToolbar">
-            <FileUpload
-                setDisplay={setUploadDisplay}
-                setImageURL={setImageURL}
-            />
+            {uploadDisplay && (
+                <FileUpload
+                    setDisplay={setUploadDisplay}
+                    editor={editor}
+                />
+            )}
             <ToolbarButton
                 title="Bold"
                 active={s?.bold}

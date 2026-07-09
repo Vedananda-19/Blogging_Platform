@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { generateHTML } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
 import {
     LuThumbsUp,
     LuThumbsDown,
@@ -65,7 +66,7 @@ const BlogsPage = () => {
 
     const renderContent = (content: string) => {
         try {
-            return generateHTML(JSON.parse(content), [StarterKit]);
+            return generateHTML(JSON.parse(content), [StarterKit, Image]);
         } catch {
             return "";
         }

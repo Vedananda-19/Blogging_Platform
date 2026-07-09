@@ -11,8 +11,9 @@ from models import (
     CommentLikes,
     BlogSaves,
 )
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from datetime import datetime
+from cloudinary.uploader import upload
 
 
 def create_blog(blogData: CreateBlogModel, db: Session, user: CurrentUser):
@@ -26,32 +27,34 @@ def create_blog(blogData: CreateBlogModel, db: Session, user: CurrentUser):
 
 def get_blogs(cursor: datetime | None, limit: int, search: str, sort: str, db: Session):
 
-    #Querying
+    # Querying
     blogs_query = db.query(Blogs)
 
-    #Filtering
+    # Filtering
     blogs_query = blogs_query.filter(
         or_(Blogs.title.ilike(f"%{search}%"), Blogs.content.ilike(f"%{search}%"))
     )
 
-    #Counting
+    # Counting
     total_blogs = blogs_query.count()
 
-    #Pagination
+    # Pagination
     blogs_query = (
         blogs_query.filter(Blogs.created_at < cursor) if cursor else blogs_query
     )
 
-    #Sorting
-    if sort=="top":
-        blogs_query = blogs_query.order_by((Blogs.liked_count-Blogs.disliked_count).desc())
+    # Sorting
+    if sort == "top":
+        blogs_query = blogs_query.order_by(
+            (Blogs.liked_count - Blogs.disliked_count).desc()
+        )
     else:
         blogs_query = blogs_query.order_by(Blogs.created_at.desc())
 
-    #Limiting
+    # Limiting
     blogs = blogs_query.limit(limit).all()
 
-    #Getting Next Cursor
+    # Getting Next Cursor
     next_cursor = blogs[-1].created_at if blogs else None
 
     return PaginatedBlogs(
@@ -161,3 +164,12 @@ def get_blog(blog_id: str, db: Session):
     if not blog:
         raise HTTPException(404, "Blog not found")
     return BlogOut.model_validate(blog)
+
+
+def upload_image(file: UploadFile):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(400,"The file should be an image")
+    
+    result = upload(file.file,folder="blog_images")
+
+    return {"url":result["secure_url"],"public_id":result["public_id"]}

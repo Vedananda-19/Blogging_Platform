@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from database import db_dependency
 from models import CreateBlogModel, CurrentUser, PaginatedBlogs, CreateCommentModel, BlogOut
 from services import blog_service
@@ -62,7 +62,11 @@ def get_comments(
     return blog_service.get_blog_comments(page, limit, blog_id, db, user)
 
 
-# Keep this LAST: a single-segment path param would otherwise shadow /blog/blogs etc.
 @blog_router.get("/{blog_id}", response_model=BlogOut)
 def get_blog(blog_id: str, db: db_dependency):
     return blog_service.get_blog(blog_id, db)
+
+@blog_router.post("/image/upload")
+def upload_image(file:UploadFile = File(...)):
+    return blog_service.upload_image(file)
+

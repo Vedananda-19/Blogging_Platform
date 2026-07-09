@@ -5,14 +5,18 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { toast } from "react-toastify";
 import BlogEditor from "../components/BlogEditor";
-import Image from "@tiptap/extension-image"
+import Image from "@tiptap/extension-image";
+import { LuImagePlus, LuTrash2 } from "react-icons/lu";
 import api from "../apis/api";
+import FileUpload from "../components/FileUpload";
 
 const CreateBlogPage = () => {
     const [blogTitle, setBlogTitle] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [wordCount, setWordCount] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadCoverDisplay, setUploadCoverDisplay] = useState(false);
+    const [coverImage, setCoverImage] = useState("");
     const navigate = useNavigate();
 
     const editor = useEditor({
@@ -96,6 +100,33 @@ const CreateBlogPage = () => {
                     if (errorMsg) setErrorMsg("");
                 }}
             />
+            {!coverImage && (
+                <button
+                    className="coverButton"
+                    onClick={() => setUploadCoverDisplay(true)}
+                >
+                    <LuImagePlus />
+                    Add Cover Image
+                </button>
+            )}
+            {coverImage && (
+                <div className="coverPreview">
+                    <img className="coverImage" src={coverImage} alt="Cover" />
+                    <button
+                        className="coverRemove"
+                        onClick={() => setCoverImage("")}
+                    >
+                        <LuTrash2 />
+                        Remove Cover
+                    </button>
+                </div>
+            )}
+            {uploadCoverDisplay && (
+                <FileUpload
+                    setDisplay={setUploadCoverDisplay}
+                    setImageURL={setCoverImage}
+                />
+            )}
 
             {errorMsg && <p className="errorMessage">{errorMsg}</p>}
 

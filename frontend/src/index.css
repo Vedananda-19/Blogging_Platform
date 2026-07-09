@@ -580,3 +580,177 @@ input::placeholder { color: var(--color-text-secondary); }
   height: 0;
   pointer-events: none;
 }
+
+/* Images inside the editor */
+.editorContent .tiptap img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: .5rem;
+  margin: .5rem 0;
+}
+
+.editorContent .tiptap img.ProseMirror-selectednode {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* Images in rendered blog content */
+.blogContent img,
+.blogPreview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: .5rem;
+  margin: .5rem 0;
+}
+
+/* ---- Cover image ---- */
+.coverButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  align-self: flex-start;
+  border: 1px dashed var(--color-border-soft);
+  border-radius: .55rem;
+  background: var(--color-surface);
+  color: var(--color-text-tertiary);
+  padding: .6rem 1rem;
+  font-weight: 600;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.coverButton:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-brand);
+  color: var(--color-brand-hover);
+}
+
+.coverPreview {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: .75rem;
+  overflow: hidden;
+}
+
+.coverImage {
+  display: block;
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+}
+
+.coverRemove {
+  position: absolute;
+  top: .6rem;
+  right: .6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  border: 1px solid var(--color-border-soft);
+  border-radius: .5rem;
+  background: rgba(17, 17, 24, 0.75);
+  color: var(--color-text-primary);
+  backdrop-filter: blur(4px);
+  padding: .4rem .7rem;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: border-color .15s, color .15s;
+}
+
+.coverRemove:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+/* ============================================================
+   FILE UPLOAD MODAL
+   ============================================================ */
+
+.uploadOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.uploadModal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .85rem;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.uploadModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.uploadModalHeader h3 { color: var(--color-text-primary); font-size: 1.15rem; }
+
+.uploadClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid transparent;
+  border-radius: .4rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  transition: background .12s, color .12s;
+}
+
+.uploadClose:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.uploadClose:disabled { opacity: .4; cursor: not-allowed; }
+
+.uploadDropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 160px;
+  border: 2px dashed var(--color-border-soft);
+  border-radius: .65rem;
+  background: var(--color-page-bg);
+  color: var(--color-text-secondary);
+  padding: 1.5rem;
+  font-weight: 600;
+  transition: border-color .15s, background .15s, color .15s;
+}
+
+.uploadDropzone:hover:not(:disabled) {
+  border-color: var(--color-brand);
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.uploadDropzone:disabled { cursor: progress; }
+
+.uploadDropzoneIcon { font-size: 1.75rem; color: var(--color-brand); }
+.uploadHint { font-size: .8rem; color: var(--color-text-secondary); font-weight: 400; }
+
+.uploadSpin {
+  font-size: 1.6rem;
+  color: var(--color-brand);
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
