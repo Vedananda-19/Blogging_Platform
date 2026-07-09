@@ -1,6 +1,6 @@
 import { EditorContent, useCurrentEditor, useEditorState } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
     LuBold,
     LuItalic,

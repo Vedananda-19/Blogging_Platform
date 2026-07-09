@@ -31,7 +31,8 @@ class Users(Base):
     photo_id = Column(String, nullable=True)
 
     blogs = relationship("Blogs", back_populates="author")
-    liked_blogs = relationship("BlogLikes")
+    liked_blogs = relationship("BlogLikes",back_populates="user")
+    comments = relationship("BlogComments", back_populates="user")
 
 
 class RefreshTokens(Base):
@@ -48,6 +49,7 @@ class Blogs(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     title = Column(String)
     content = Column(String)
+    cover = Column(String, default="")
     user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
@@ -63,6 +65,7 @@ class Blogs(Base):
 
     author = relationship("Users", back_populates="blogs")
     likes = relationship("BlogLikes")
+    comments = relationship("BlogComments")
 
     @property
     def author_name(self):
@@ -86,6 +89,8 @@ class BlogLikes(Base):
     user_id = Column(String, ForeignKey("users.id"), primary_key=True)
     type = Column(String)
 
+    user = relationship("Users", back_populates="liked_blogs")
+
 
 class BlogComments(Base):
     __tablename__ = "blog_comments"
@@ -96,6 +101,15 @@ class BlogComments(Base):
     comment = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     comment_likes = Column(Integer, default=0)
+
+    user = relationship("Users",back_populates="comments")
+    @property
+    def username(self):
+        return self.user.username
+    @property
+    def profile_picture(self):
+        return self.user.photo_url
+
 
 
 class CommentLikes(Base):
@@ -122,6 +136,7 @@ class GoogleToken(BaseModel):
 class CreateBlogModel(BaseModel):
     title: str
     content: str
+    cover: str = ""
 
 
 class CreateCommentModel(BaseModel):
@@ -143,6 +158,7 @@ class BlogOut(BaseModel):
     id: str
     title: str
     content: str
+    cover: str
     created_at: datetime
     updated_at: datetime
     liked_count: int
@@ -161,4 +177,27 @@ class PaginatedBlogs(BaseModel):
     total_count: int
     next_cursor: datetime | None = None
     hasMore: bool
+
+
+class CommentOut(BaseModel):
+    model_config = {"from_attributes": True}
+
+    id: str
+    blog_id: str
+    user_id: str
+    comment: str
+    created_at: datetime
+    comment_likes: int
+    username: str
+    profile_picture: str | None = None
+
+    @field_serializer("created_at")
+    def as_utc(self, dt: datetime) -> str:
+        return dt.replace(tzinfo=timezone.utc).isoformat()
+
+
+class PaginatedComments(BaseModel):
+    comments: list[CommentOut]
+    comment_count: int
+    page_count: int
 

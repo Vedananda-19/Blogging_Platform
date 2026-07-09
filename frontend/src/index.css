@@ -754,3 +754,95 @@ input::placeholder { color: var(--color-text-secondary); }
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   COMMENTS
+   ============================================================ */
+
+/* Comment preview inside a blog card */
+.commentSection {
+  margin-top: .85rem;
+  padding-top: .85rem;
+  border-top: 1px solid var(--color-border-inner);
+  text-align: left;
+}
+
+.commentComposer {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: .85rem;
+}
+
+.commentInput {
+  flex: 1;
+  border: 1px solid var(--color-border-soft);
+  border-radius: .5rem;
+  padding: .55rem .75rem;
+  background: var(--color-surface);
+}
+
+.commentInput:focus { outline: none; border-color: var(--color-brand); }
+
+.commentComposer .primaryButton { padding: .55rem 1rem; }
+
+.commentList { display: grid; gap: .85rem; }
+
+.commentItem {
+  display: flex;
+  gap: .6rem;
+  align-items: flex-start;
+}
+
+.commentBody {
+  display: grid;
+  gap: .2rem;
+  background: var(--color-page-bg);
+  border: 1px solid var(--color-border-inner);
+  border-radius: .55rem;
+  padding: .5rem .7rem;
+  flex: 1;
+}
+
+.commentAuthor {
+  color: var(--color-text-primary);
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.commentText {
+  color: var(--color-text-primary);
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.commentMeta { color: var(--color-text-secondary); font-size: .75rem; }
+
+.commentEmpty { color: var(--color-text-secondary); font-size: .85rem; }
+
+.linkButton {
+  margin-top: .6rem;
+  border: none;
+  background: none;
+  color: var(--color-brand);
+  font-size: .85rem;
+  font-weight: 600;
+  padding: 0;
+}
+
+.linkButton:hover { color: var(--color-brand-hover); text-decoration: underline; }
+
+/* Comments block on the blog detail page */
+.commentsBlock {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.commentsHeading {
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  margin-bottom: .5rem;
+}
+
+.commentsBlock .commentSection { border-top: none; padding-top: 0; margin-top: 0; }

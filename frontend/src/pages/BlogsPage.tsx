@@ -1,16 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { generateHTML } from "@tiptap/html";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import {
-    LuThumbsUp,
-    LuThumbsDown,
-    LuBookmark,
-    LuMessageCircle,
-} from "react-icons/lu";
 import useBlogs from "../hooks/useBlogs";
-import useUpdateBlogs from "../hooks/useUpdateBlogs";
 import useUserBlogs from "../hooks/useUserBlogs";
+import BlogCard from "../components/BlogCard";
 import { useEffect, useRef } from "react";
 
 const BlogsPage = () => {
@@ -26,12 +17,6 @@ const BlogsPage = () => {
         isFetchingNextPage,
         hasNextPage,
     } = useBlogs(searchParams);
-
-    const { likeMutationResult, dislikeMutationResult, saveMutationResult } =
-        useUpdateBlogs();
-    const { mutateAsync: likeBlog } = likeMutationResult;
-    const { mutateAsync: dislikeBlog } = dislikeMutationResult;
-    const { mutateAsync: saveBlog } = saveMutationResult;
 
     const { likedSet, dislikedSet, savedSet, commentedSet } = useUserBlogs();
 
@@ -64,14 +49,6 @@ const BlogsPage = () => {
         return () => observer.disconnect();
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    const renderContent = (content: string) => {
-        try {
-            return generateHTML(JSON.parse(content), [StarterKit, Image]);
-        } catch {
-            return "";
-        }
-    };
-
     return (
         <div className="routeState">
             <h1>Blogs</h1>
@@ -102,61 +79,14 @@ const BlogsPage = () => {
             <div className="blogList">
                 {data?.pages.map((page) =>
                     page.blogs.map((blog) => (
-                        <div
-                            className="blogCard"
+                        <BlogCard
                             key={blog.id}
-                            onClick={() => navigate(`/blogs/${blog.id}`)}
-                        >
-                            <h3>{blog.title}</h3>
-                            <div className="blogAuthor">
-                                <div className="authorPhoto">
-                                    <img
-                                        src={blog.profile_picture || "/default_pfp.png"}
-                                        alt="pfp"
-                                    />
-                                </div>
-                                <p className="blogMeta">by {blog.author_name}</p>
-                            </div>
-                            <div
-                                className="blogPreview"
-                                dangerouslySetInnerHTML={{
-                                    __html: renderContent(blog.content),
-                                }}
-                            />
-                            <div
-                                className="blogActions"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <button
-                                    className={`actionButton${likedSet.has(blog.id) ? " active" : ""}`}
-                                    onClick={() => likeBlog(blog.id)}
-                                >
-                                    <LuThumbsUp />
-                                    <span>{blog.liked_count}</span>
-                                </button>
-                                <button
-                                    className={`actionButton${dislikedSet.has(blog.id) ? " active" : ""}`}
-                                    onClick={() => dislikeBlog(blog.id)}
-                                >
-                                    <LuThumbsDown />
-                                    <span>{blog.disliked_count}</span>
-                                </button>
-                                <button
-                                    className={`actionButton${commentedSet.has(blog.id) ? " active" : ""}`}
-                                    title="Comments"
-                                >
-                                    <LuMessageCircle />
-                                    <span>{blog.comment_count}</span>
-                                </button>
-                                <button
-                                    className={`actionButton saveButton${savedSet.has(blog.id) ? " active" : ""}`}
-                                    title="Save"
-                                    onClick={() => saveBlog(blog.id)}
-                                >
-                                    <LuBookmark />
-                                </button>
-                            </div>
-                        </div>
+                            blog={blog}
+                            liked={likedSet.has(blog.id)}
+                            disliked={dislikedSet.has(blog.id)}
+                            saved={savedSet.has(blog.id)}
+                            commented={commentedSet.has(blog.id)}
+                        />
                     )),
                 )}
                 {isFetchingNextPage && <p>fetching...</p>}

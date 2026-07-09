@@ -12,6 +12,7 @@ import {
 import useBlog from "../hooks/useBlog";
 import useUserBlogs from "../hooks/useUserBlogs";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
+import CommentSection from "../components/CommentSection";
 
 const BlogDetailPage = () => {
     const { id } = useParams();
@@ -106,6 +107,14 @@ const BlogDetailPage = () => {
                     <span>Save</span>
                 </button>
             </div>
+
+            {/* First page of comments (limit 20). Pagination to be added later. */}
+            <section className="commentsBlock">
+                <h2 className="commentsHeading">
+                    Comments ({blog.comment_count})
+                </h2>
+                <CommentSection blogId={blog.id} limit={20} />
+            </section>
         </div>
     );
 };

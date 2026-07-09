@@ -51,6 +51,7 @@ const CreateBlogPage = () => {
         const blog = {
             title: blogTitle.trim(),
             content: JSON.stringify(editor.getJSON()),
+            cover: coverImage
         };
 
         setIsSubmitting(true);

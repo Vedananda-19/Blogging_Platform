@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
 from database import db_dependency
-from models import CreateBlogModel, CurrentUser, PaginatedBlogs, CreateCommentModel, BlogOut
+from models import CreateBlogModel, CurrentUser, PaginatedBlogs, CreateCommentModel, BlogOut, PaginatedComments
 from services import blog_service
 from services.auth_service import get_current_user
 from datetime import datetime
@@ -51,15 +51,16 @@ def like_comment(comment_id: str, db: db_dependency, user: user_dependency):
     return blog_service.like_comment(comment_id, db, user)
 
 
-@blog_router.get("/comments/{blog_id}")
+@blog_router.get("/comments/{blog_id}", response_model=PaginatedComments)
 def get_comments(
     blog_id: str,
     db: db_dependency,
     user: user_dependency,
-    page: int | None = None,
+    page: int = 1,
+    sort: str = "recent",
     limit: int = 20,
 ):
-    return blog_service.get_blog_comments(page, limit, blog_id, db, user)
+    return blog_service.get_blog_comments(page, limit, blog_id, db, sort, user)
 
 
 @blog_router.get("/{blog_id}", response_model=BlogOut)

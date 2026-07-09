@@ -10,6 +10,8 @@ from models import (
     BlogComments,
     CommentLikes,
     BlogSaves,
+    CommentOut,
+    PaginatedComments,
 )
 from fastapi import HTTPException, UploadFile
 from datetime import datetime
@@ -19,14 +21,18 @@ from cloudinary.uploader import upload
 def create_blog(blogData: CreateBlogModel, db: Session, user: CurrentUser):
     if not blogData.title or not blogData.content:
         raise HTTPException(400, "Fields are Required")
-    blog = Blogs(title=blogData.title, content=blogData.content, user_id=user.user_id)
+    blog = Blogs(
+        title=blogData.title,
+        content=blogData.content,
+        cover=blogData.cover,
+        user_id=user.user_id,
+    )
     db.add(blog)
     db.commit()
     return {"message": "Blog Added Successfully"}
 
 
 def get_blogs(cursor: datetime | None, limit: int, search: str, sort: str, db: Session):
-
     # Querying
     blogs_query = db.query(Blogs)
 
@@ -125,8 +131,16 @@ def save_blog(blog_id: str, db: Session, user: CurrentUser):
 
 
 def comment_on_blog(blog_id: str, comment: str, db: Session, user: CurrentUser):
-    blog_comment = BlogComments(blog_id=blog_id, user_id=user.user_id, comment=comment)
+    if not comment or not comment.strip():
+        raise HTTPException(400, "Comment cannot be empty")
+    blog = db.get(Blogs, blog_id)
+    if not blog:
+        raise HTTPException(404, "Blog not found")
+    blog_comment = BlogComments(
+        blog_id=blog_id, user_id=user.user_id, comment=comment.strip()
+    )
     db.add(blog_comment)
+    blog.comment_count += 1
     db.commit()
     return {"message": "Comment Added Successfully"}
 
@@ -147,16 +161,32 @@ def like_comment(comment_id: str, db: Session, user: CurrentUser):
 
 
 def get_blog_comments(
-    page: int, limit: int, blog_id: str, db: Session, user: CurrentUser
+    page: int, limit: int, blog_id: str, db: Session, sort: str, user: CurrentUser
 ):
-    comments_query = db.query(BlogComments).filter(BlogComments.blog_id == blog_id)
-    total_count = comments_query.count()
-    comments = comments_query.offset((page - 1) * limit).limit(limit).all()
+    blog = db.get(Blogs, blog_id)
+    if not blog:
+        raise HTTPException(404, "Blog not found")
+
+    # Fetch straight off the blog via the relationship instead of re-querying
+    comments = list(blog.comments)
+    total_count = len(comments)
+
+    if sort == "top":
+        comments.sort(key=lambda c: c.comment_likes, reverse=True)
+    else:
+        comments.sort(key=lambda c: c.created_at, reverse=True)
+
+    start = (page - 1) * limit
+    page_items = comments[start : start + limit]
 
     p = total_count // limit
     pages = p + 1 if total_count and total_count % limit != 0 else p
 
-    return {"comments": comments, "comment_count": total_count, "page_count": pages}
+    return PaginatedComments(
+        comments=[CommentOut.model_validate(c) for c in page_items],
+        comment_count=total_count,
+        page_count=pages,
+    )
 
 
 def get_blog(blog_id: str, db: Session):
@@ -166,10 +196,14 @@ def get_blog(blog_id: str, db: Session):
     return BlogOut.model_validate(blog)
 
 
-def upload_image(file: UploadFile):
+async def upload_image(file: UploadFile):
     if not file.content_type.startswith("image/"):
-        raise HTTPException(400,"The file should be an image")
-    
-    result = upload(file.file,folder="blog_images")
+        raise HTTPException(400, "The file should be an image")
+    MAX_FILE_MB = 10  # (Cloudinary isnt allowing more)
+    contents = await file.read()
+    if len(contents) > MAX_FILE_MB*1024*1024:
+        raise HTTPException(413, f"File Size must be less than {MAX_FILE_MB}MB")
 
-    return {"url":result["secure_url"],"public_id":result["public_id"]}
+    result = upload(file.file, folder="blog_images")
+
+    return {"url": result["secure_url"], "public_id": result["public_id"]}

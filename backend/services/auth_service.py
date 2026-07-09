@@ -48,7 +48,7 @@ def hash_token(token: str) -> str:
 
 
 def create_access_token(user: Users):
-    expiry = datetime.now(timezone.utc) + timedelta(minutes=1)
+    expiry = datetime.now(timezone.utc) + timedelta(minutes=20)
     encode_data = {"id": user.id, "sub": user.username, "exp": expiry}
     token: str = jwt.encode(encode_data, JWT_SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": token, "token_type": "bearer"}
