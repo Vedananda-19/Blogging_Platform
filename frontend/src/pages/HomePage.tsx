@@ -31,6 +31,9 @@ function HomePage() {
             <button className="primaryButton" onClick={() => navigate("/blogs")}>
                 View Blogs
             </button>
+            <button className="primaryButton" onClick={() => navigate("/profile")}>
+                Profile
+            </button>
         </div>
     )
 }

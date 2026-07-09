@@ -663,6 +663,61 @@ input::placeholder { color: var(--color-text-secondary); }
 }
 
 /* ============================================================
+   EDIT PROFILE MODAL
+   ============================================================ */
+
+.editAvatarButton {
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  overflow: hidden;
+  padding: 0;
+  align-self: center;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-brand-subtle);
+}
+
+.editAvatarButton img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.editAvatarOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1.4rem;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.editAvatarButton:hover .editAvatarOverlay { opacity: 1; }
+
+.editField {
+  display: grid;
+  gap: .4rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+.editField input {
+  border: 1px solid var(--color-border-soft);
+  border-radius: .5rem;
+  padding: .6rem .75rem;
+  background: var(--color-surface);
+}
+
+.editField input:focus { outline: none; border-color: var(--color-brand); }
+
+/* ============================================================
    FILE UPLOAD MODAL
    ============================================================ */
 
@@ -753,6 +808,95 @@ input::placeholder { color: var(--color-text-secondary); }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   PROFILE PAGE
+   ============================================================ */
+
+.profilePage {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.profilePage .backButton { align-self: flex-start; }
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .85rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.profileAvatar {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--color-brand-subtle);
+  border: 1px solid var(--color-border-soft);
+}
+
+.profileAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profileInfo { flex: 1; min-width: 0; }
+.profileInfo h1 { color: var(--color-text-primary); font-size: 1.5rem; }
+.profileHandle { color: var(--color-text-secondary); font-size: .9rem; }
+
+.profileEditButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.profileSubHeader h1 { color: var(--color-text-primary); font-size: 1.6rem; }
+
+.profileSections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .75rem;
+}
+
+.profileSectionButton {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  border: 1px solid var(--color-border-soft);
+  border-radius: .65rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: 1rem 1.15rem;
+  font-weight: 600;
+  text-align: left;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+
+.profileSectionButton:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-brand);
+  transform: translateY(-2px);
+}
+
+.profileSectionIcon {
+  font-size: 1.25rem;
+  color: var(--color-brand);
+  flex-shrink: 0;
 }
 
 /* ============================================================

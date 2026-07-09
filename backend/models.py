@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, field_serializer
+from pydantic import BaseModel, field_validator, field_serializer, Field
 from sqlalchemy import (
     Column,
     Integer,
@@ -33,6 +33,7 @@ class Users(Base):
     blogs = relationship("Blogs", back_populates="author")
     liked_blogs = relationship("BlogLikes",back_populates="user")
     comments = relationship("BlogComments", back_populates="user")
+    saved = relationship("BlogSaves", back_populates="user")
 
 
 class RefreshTokens(Base):
@@ -64,8 +65,8 @@ class Blogs(Base):
     comment_count = Column(Integer, default=0)
 
     author = relationship("Users", back_populates="blogs")
-    likes = relationship("BlogLikes")
-    comments = relationship("BlogComments")
+    likes = relationship("BlogLikes", back_populates="blog")
+    comments = relationship("BlogComments", back_populates="blog")
 
     @property
     def author_name(self):
@@ -81,6 +82,9 @@ class BlogSaves(Base):
     blog_id = Column(String,ForeignKey("blogs.id"),primary_key=True)
     user_id = Column(String, ForeignKey("users.id"), primary_key=True)
 
+    user = relationship("Users", back_populates="saved")
+    blog = relationship("Blogs")
+
 
 class BlogLikes(Base):
     __tablename__ = "blog_likes"
@@ -90,6 +94,7 @@ class BlogLikes(Base):
     type = Column(String)
 
     user = relationship("Users", back_populates="liked_blogs")
+    blog = relationship("Blogs", back_populates="likes")
 
 
 class BlogComments(Base):
@@ -103,6 +108,7 @@ class BlogComments(Base):
     comment_likes = Column(Integer, default=0)
 
     user = relationship("Users",back_populates="comments")
+    blog = relationship("Blogs", back_populates="comments")
     @property
     def username(self):
         return self.user.username
@@ -142,6 +148,11 @@ class CreateBlogModel(BaseModel):
 class CreateCommentModel(BaseModel):
     blog_id: str
     comment: str
+
+
+class EditProfileModel(BaseModel):
+    username: str
+    photo_url: str = ""
 
 
 class CurrentUser(BaseModel):
@@ -200,4 +211,11 @@ class PaginatedComments(BaseModel):
     comments: list[CommentOut]
     comment_count: int
     page_count: int
+
+class UserOut(BaseModel):
+    model_config = {"from_attributes": True}
+
+    id: str
+    username: str
+    photo_url: str | None = None
 

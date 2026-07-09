@@ -6,6 +6,11 @@ import ProtectedRoute from "./layouts/ProtectedRoute";
 import CreateBlogPage from "./pages/CreateBlogPage";
 import BlogsPage from "./pages/BlogsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+import ProfileBlogsPage from "./pages/ProfileBlogsPage";
+import ProfileLikedPage from "./pages/ProfileLikedPage";
+import ProfileSavedPage from "./pages/ProfileSavedPage";
+import ProfileCommentedPage from "./pages/ProfileCommentedPage";
 import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
@@ -27,6 +32,26 @@ const router = createBrowserRouter([
             {
                 path: "/blogs/:id",
                 element: <BlogDetailPage />,
+            },
+            {
+                path: "/profile",
+                element: <ProfilePage />,
+            },
+            {
+                path: "/profile/blogs",
+                element: <ProfileBlogsPage />,
+            },
+            {
+                path: "/profile/liked",
+                element: <ProfileLikedPage />,
+            },
+            {
+                path: "/profile/saved",
+                element: <ProfileSavedPage />,
+            },
+            {
+                path: "/profile/comments",
+                element: <ProfileCommentedPage />,
             },
         ],
     },

@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_
 from models import (
     CreateBlogModel,
@@ -163,21 +163,22 @@ def like_comment(comment_id: str, db: Session, user: CurrentUser):
 def get_blog_comments(
     page: int, limit: int, blog_id: str, db: Session, sort: str, user: CurrentUser
 ):
-    blog = db.get(Blogs, blog_id)
-    if not blog:
-        raise HTTPException(404, "Blog not found")
-
-    # Fetch straight off the blog via the relationship instead of re-querying
-    comments = list(blog.comments)
-    total_count = len(comments)
+    base = db.query(BlogComments).filter(BlogComments.blog_id == blog_id)
+    total_count = base.count()
 
     if sort == "top":
-        comments.sort(key=lambda c: c.comment_likes, reverse=True)
+        base = base.order_by(BlogComments.comment_likes.desc())
     else:
-        comments.sort(key=lambda c: c.created_at, reverse=True)
+        base = base.order_by(BlogComments.created_at.desc())
 
-    start = (page - 1) * limit
-    page_items = comments[start : start + limit]
+    # Sort + paginate in SQL; eager-load the author to avoid an N+1 on
+    # username / profile_picture during serialization.
+    page_items = (
+        base.options(joinedload(BlogComments.user))
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
 
     p = total_count // limit
     pages = p + 1 if total_count and total_count % limit != 0 else p

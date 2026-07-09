@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from database import db_dependency
-from models import RegisterModel, CurrentUser, GoogleToken
+from models import RegisterModel, CurrentUser, GoogleToken, Users, UserOut
 from services import auth_service
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -16,7 +16,7 @@ def login(
 ):  # For Swagger Docs
     ua_string = request.headers.get(
         "User-Agent"
-    )  # For narrowing the device type , for separate refresh tokens in different devices
+    )  # For narrowing the device type , to separate refresh tokens in different devices
     return auth_service.verify_login(
         formData.username, formData.password, db, response, device=ua_string
     )
@@ -28,8 +28,9 @@ def register(formData: RegisterModel, db: db_dependency):
 
 
 @auth_router.get("/me")
-def me(user: CurrentUser = Depends(auth_service.get_current_user)):
-    return user
+def me(db:db_dependency, user: CurrentUser = Depends(auth_service.get_current_user)):
+    user = db.query(Users).filter(Users.id==user.user_id).first()
+    return UserOut.model_validate(user)
 
 
 @auth_router.get("/get-users")
