@@ -42,7 +42,7 @@ const ProfilePage = () => {
 
             <div className="profileHeader">
                 <div className="profileAvatar">
-                    <img src={user.photo_url||"/default_pfp.png"} alt="avatar" />
+                    <img src={user?.photo_url||"/default_pfp.png"} alt="avatar" />
                 </div>
                 <div className="profileInfo">
                     <h1>{user?.username ?? "Your Profile"}</h1>

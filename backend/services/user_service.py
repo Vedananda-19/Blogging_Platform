@@ -60,6 +60,16 @@ def get_user_blogs(db: Session, user: CurrentUser):
 
 def edit_profile(username: str, photo_url: str, db: Session, user: CurrentUser):
     db_user = _require_user(db, user)
+    username = username.strip()
+    if not username:
+        raise HTTPException(400, "Username cannot be empty")
+    taken = (
+        db.query(Users)
+        .filter(Users.username == username, Users.id != user.user_id)
+        .first()
+    )
+    if taken:
+        raise HTTPException(400, "Username already taken")
     db_user.username = username
     db_user.photo_url = photo_url
     db.commit()

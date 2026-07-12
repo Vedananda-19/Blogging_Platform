@@ -8,9 +8,16 @@ type Props = {
     title: string;
     subtitle: string;
     emptyText: string;
+    editable?: boolean;
 };
 
-const ProfileBlogList = ({ which, title, subtitle, emptyText }: Props) => {
+const ProfileBlogList = ({
+    which,
+    title,
+    subtitle,
+    emptyText,
+    editable,
+}: Props) => {
     const navigate = useNavigate();
     const hook = useUserBlogs(which);
     const { likedSet, dislikedSet, savedSet, commentedSet } = hook;
@@ -48,6 +55,7 @@ const ProfileBlogList = ({ which, title, subtitle, emptyText }: Props) => {
                         disliked={dislikedSet.has(blog.id)}
                         saved={savedSet.has(blog.id)}
                         commented={commentedSet.has(blog.id)}
+                        editable={editable}
                     />
                 ))}
             </div>

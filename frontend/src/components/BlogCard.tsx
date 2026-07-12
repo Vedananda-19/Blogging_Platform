@@ -8,6 +8,8 @@ import {
     LuThumbsDown,
     LuBookmark,
     LuMessageCircle,
+    LuPencil,
+    LuTrash2,
 } from "react-icons/lu";
 import type { Blog } from "../hooks/useBlogs";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
@@ -19,6 +21,7 @@ type Props = {
     disliked?: boolean;
     saved?: boolean;
     commented?: boolean;
+    editable?: boolean;
 };
 
 const renderContent = (content: string) => {
@@ -31,22 +34,63 @@ const renderContent = (content: string) => {
 
 const COMMENT_PREVIEW_LIMIT = 3;
 
-const BlogCard = ({ blog, liked, disliked, saved, commented }: Props) => {
+const BlogCard = ({
+    blog,
+    liked,
+    disliked,
+    saved,
+    commented,
+    editable,
+}: Props) => {
     const navigate = useNavigate();
     const [showComments, setShowComments] = useState(false);
 
-    const { likeMutationResult, dislikeMutationResult, saveMutationResult } =
-        useUpdateBlogs();
+    const {
+        likeMutationResult,
+        dislikeMutationResult,
+        saveMutationResult,
+        deleteMutationResult,
+    } = useUpdateBlogs();
     const { mutateAsync: likeBlog } = likeMutationResult;
     const { mutateAsync: dislikeBlog } = dislikeMutationResult;
     const { mutateAsync: saveBlog } = saveMutationResult;
+    const { mutateAsync: deleteBlog } = deleteMutationResult;
+
+    const handleDelete = () => {
+        if (window.confirm("Delete this blog? This cannot be undone.")) {
+            deleteBlog(blog.id);
+        }
+    };
 
     return (
         <div
             className="blogCard"
             onClick={() => navigate(`/blogs/${blog.id}`)}
         >
-            <h3>{blog.title}</h3>
+            <div className="blogCardHead">
+                <h3>{blog.title}</h3>
+                {editable && (
+                    <div
+                        className="blogCardOwnerActions"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            className="actionButton"
+                            title="Edit"
+                            onClick={() => navigate(`/blogs/${blog.id}/edit`)}
+                        >
+                            <LuPencil />
+                        </button>
+                        <button
+                            className="actionButton dangerButton"
+                            title="Delete"
+                            onClick={handleDelete}
+                        >
+                            <LuTrash2 />
+                        </button>
+                    </div>
+                )}
+            </div>
             <div className="blogAuthor">
                 <div className="authorPhoto">
                     <img
@@ -56,6 +100,9 @@ const BlogCard = ({ blog, liked, disliked, saved, commented }: Props) => {
                 </div>
                 <p className="blogMeta">by {blog.author_name}</p>
             </div>
+            {blog.cover && (
+                <img className="blogCardCover" src={blog.cover} alt="" />
+            )}
             <div
                 className="blogPreview"
                 dangerouslySetInnerHTML={{

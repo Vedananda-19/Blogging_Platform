@@ -67,7 +67,19 @@ def get_comments(
 def get_blog(blog_id: str, db: db_dependency):
     return blog_service.get_blog(blog_id, db)
 
+
+@blog_router.put("/{blog_id}")
+def update_blog(
+    blog_id: str, blogData: CreateBlogModel, db: db_dependency, user: user_dependency
+):
+    return blog_service.update_blog(blog_id, blogData, db, user)
+
+
+@blog_router.delete("/{blog_id}")
+def delete_blog(blog_id: str, db: db_dependency, user: user_dependency):
+    return blog_service.delete_blog(blog_id, db, user)
+
 @blog_router.post("/image/upload")
-def upload_image(file:UploadFile = File(...)):
-    return blog_service.upload_image(file)
+async def upload_image(user: user_dependency, file: UploadFile = File(...)):
+    return await blog_service.upload_image(file)
 

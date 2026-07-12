@@ -13,7 +13,6 @@ const EditProfileModal = ({ setDisplay }: Props) => {
     const { data: user } = useUser();
     const queryClient = useQueryClient();
 
-    // Controlled fields, seeded from the current user
     const [username, setUsername] = useState<string>(user?.username ?? "");
     const [imageURL, setImageURL] = useState<string>(user?.photo_url ?? "");
     const [uploadDisplay, setUploadDisplay] = useState(false);

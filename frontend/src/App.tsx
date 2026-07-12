@@ -3,9 +3,10 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./layouts/ProtectedRoute";
-import CreateBlogPage from "./pages/CreateBlogPage";
+import BlogFormPage from "./pages/BlogFormPage";
 import BlogsPage from "./pages/BlogsPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import EditBlogPage from "./pages/EditBlogPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileBlogsPage from "./pages/ProfileBlogsPage";
 import ProfileLikedPage from "./pages/ProfileLikedPage";
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "/create",
-                element: <CreateBlogPage />,
+                element: <BlogFormPage />,
             },
             {
                 path: "/blogs",
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: "/blogs/:id",
                 element: <BlogDetailPage />,
+            },
+            {
+                path: "/blogs/:id/edit",
+                element: <EditBlogPage />,
             },
             {
                 path: "/profile",

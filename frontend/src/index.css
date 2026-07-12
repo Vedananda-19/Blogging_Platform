@@ -261,6 +261,30 @@ input::placeholder { color: var(--color-text-secondary); }
 
 .blogCard h3 { color: var(--color-text-primary); margin-bottom: .35rem; }
 
+/* Cover banner on a card */
+.blogCardCover {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: .55rem;
+  display: block;
+  margin-bottom: .85rem;
+}
+
+.blogCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.blogCardOwnerActions { display: flex; gap: .4rem; flex-shrink: 0; }
+
+.actionButton.dangerButton:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
 /* Clamped, fixed-height preview on the list; full content lives on the detail page */
 .blogPreview {
   position: relative;

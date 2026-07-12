@@ -1,0 +1,32 @@
+name: blogging-platform
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - ./backend/.env
+
+    environment:
+      - DATABASE_URL=sqlite:///./data/app.db
+    volumes:
+      - ./backend/data:/usr/local/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+
+volumes:
+  backend-data:

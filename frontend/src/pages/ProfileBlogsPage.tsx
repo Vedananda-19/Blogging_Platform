@@ -6,6 +6,7 @@ const ProfileBlogsPage = () => (
         title="Your Blogs"
         subtitle="Posts you've written"
         emptyText="You haven't written any blogs yet."
+        editable
     />
 );
 
