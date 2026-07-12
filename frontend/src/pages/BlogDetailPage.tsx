@@ -62,10 +62,6 @@ const BlogDetailPage = () => {
                 <LuArrowLeft /> Back
             </button>
 
-            {blog.cover && (
-                <img className="blogDetailCover" src={blog.cover} alt="" />
-            )}
-
             <h1>{blog.title}</h1>
 
             <div className="blogAuthor">
@@ -74,6 +70,10 @@ const BlogDetailPage = () => {
                 </div>
                 <p className="blogMeta">by {blog.author_name}</p>
             </div>
+
+            {blog.cover && (
+                <img className="blogDetailCover" src={blog.cover} alt="" />
+            )}
 
             <div
                 className="blogContent"
