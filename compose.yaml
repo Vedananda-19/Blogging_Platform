@@ -12,10 +12,6 @@ services:
     env_file:
       - ./backend/.env
 
-    environment:
-      - DATABASE_URL=sqlite:///./data/app.db
-    volumes:
-      - ./backend/data:/usr/local/app/data
     restart: unless-stopped
 
   frontend:
@@ -27,6 +23,3 @@ services:
     ports:
       - "5173:5173"
     restart: unless-stopped
-
-volumes:
-  backend-data:
