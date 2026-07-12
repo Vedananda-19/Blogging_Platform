@@ -91,6 +91,9 @@ const BlogCard = ({
                     </div>
                 )}
             </div>
+            {blog.cover && (
+                <img className="blogCardCover" src={blog.cover} alt="" />
+            )}
             <div className="blogAuthor">
                 <div className="authorPhoto">
                     <img
@@ -98,11 +101,11 @@ const BlogCard = ({
                         alt="pfp"
                     />
                 </div>
-                <p className="blogMeta">by {blog.author_name}</p>
+                <p className="blogMeta">
+                    by {blog.author_name} ·{" "}
+                    {new Date(blog.created_at).toLocaleDateString()}
+                </p>
             </div>
-            {blog.cover && (
-                <img className="blogCardCover" src={blog.cover} alt="" />
-            )}
             <div
                 className="blogPreview"
                 dangerouslySetInnerHTML={{

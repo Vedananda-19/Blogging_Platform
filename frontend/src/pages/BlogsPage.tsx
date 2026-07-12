@@ -1,11 +1,10 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import useBlogs from "../hooks/useBlogs";
 import useUserBlogs from "../hooks/useUserBlogs";
 import BlogCard from "../components/BlogCard";
 import { useEffect, useRef } from "react";
 
 const BlogsPage = () => {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -50,11 +49,8 @@ const BlogsPage = () => {
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     return (
-        <div className="routeState">
+        <div className="blogsPage">
             <h1>Blogs</h1>
-            <button className="secondaryButton" onClick={() => navigate("/")}>
-                Back Home
-            </button>
             <div className="blogControls">
                 <input
                     value={searchParams.get("search") || ""}

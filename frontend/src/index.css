@@ -1014,3 +1014,218 @@ input::placeholder { color: var(--color-text-secondary); }
 }
 
 .commentsBlock .commentSection { border-top: none; padding-top: 0; margin-top: 0; }
+
+/* ============================================================
+   App shell: Navbar + Sidebar (root layout)
+   ============================================================ */
+.appShell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 1.25rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.navLogo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+}
+.navLogoMark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #2dd4bf, #3b82f6);
+}
+.navLogoText {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--color-text-primary);
+}
+.navLogoAccent { color: #2dd4bf; }
+
+.navRight { display: flex; align-items: center; }
+.navAuthButtons { display: flex; gap: .6rem; }
+
+.navUser { position: relative; }
+.navUserButton {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .3rem .6rem .3rem .3rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+.navUserButton:hover { background: var(--color-surface-hover); }
+.navAvatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.navUsername { font-weight: 600; font-size: .92rem; }
+
+.navDropdownBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+}
+.navDropdown {
+  position: absolute;
+  top: calc(100% + .5rem);
+  right: 0;
+  z-index: 50;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: .35rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .6rem;
+  box-shadow: var(--shadow-card);
+}
+.navDropdown button {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem .7rem;
+  background: transparent;
+  border: none;
+  border-radius: .45rem;
+  color: var(--color-text-primary);
+  font-size: .92rem;
+  text-align: left;
+  cursor: pointer;
+}
+.navDropdown button:hover { background: var(--color-surface-hover); }
+.navDropdownDanger { color: var(--color-danger) !important; }
+
+.appBody {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.appMain {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem .75rem;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.sidebarNav, .sidebarBottom {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+.sidebarBottom {
+  border-top: 1px solid var(--color-border);
+  padding-top: .5rem;
+}
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .65rem .8rem;
+  border-radius: .5rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .93rem;
+}
+.sidebarLink:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+.sidebarLink.active {
+  background: var(--color-brand-subtle);
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 720px) {
+  .sidebar { width: 60px; padding: 1rem .4rem; }
+  .sidebarLink span { display: none; }
+  .navUsername { display: none; }
+}
+
+/* Landing (logged-out home) */
+.landing {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+.landingHero {
+  max-width: 620px;
+  text-align: center;
+}
+.landingBadge {
+  display: inline-block;
+  padding: .3rem .8rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, .12);
+  margin-bottom: 1rem;
+}
+.landingHero h1 { font-size: 2.6rem; margin-bottom: .8rem; }
+.landingLead {
+  color: var(--color-text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1.6rem;
+}
+.landingActions { display: flex; gap: .8rem; justify-content: center; }
+
+/* Cover image on the blog detail page */
+.blogDetailCover {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  border-radius: .75rem;
+  margin: .5rem 0 1.25rem;
+}
+
+.profileHeaderActions { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+/* Blogs feed: align content to the sidebar layout (top-aligned column) */
+.blogsPage {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-align: left;
+}
+.blogsPage h1 { margin-bottom: .25rem; }

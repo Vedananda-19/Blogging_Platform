@@ -62,6 +62,10 @@ const BlogDetailPage = () => {
                 <LuArrowLeft /> Back
             </button>
 
+            {blog.cover && (
+                <img className="blogDetailCover" src={blog.cover} alt="" />
+            )}
+
             <h1>{blog.title}</h1>
 
             <div className="blogAuthor">

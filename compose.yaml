@@ -8,8 +8,6 @@ services:
     container_name: backend
     ports:
       - "8000:8000"
-    # Values are substituted from the interpolation env file at parse time.
-    # Run:  docker compose --env-file backend/.env up --build
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}

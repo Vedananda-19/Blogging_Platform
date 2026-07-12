@@ -7,6 +7,7 @@ import {
     LuThumbsUp,
     LuMessageCircle,
     LuArrowLeft,
+    LuSettings,
 } from "react-icons/lu";
 import type { IconType } from "react-icons";
 import useUser from "../hooks/useUser";
@@ -50,12 +51,20 @@ const ProfilePage = () => {
                         {user?.username ? `@${user.username}` : ""}
                     </p>
                 </div>
-                <button
-                    className="primaryButton profileEditButton"
-                    onClick={() => setEditOpen(true)}
-                >
-                    <LuPencil /> Edit Profile
-                </button>
+                <div className="profileHeaderActions">
+                    <button
+                        className="primaryButton profileEditButton"
+                        onClick={() => setEditOpen(true)}
+                    >
+                        <LuPencil /> Edit Profile
+                    </button>
+                    <button
+                        className="secondaryButton"
+                        onClick={() => navigate("/settings")}
+                    >
+                        <LuSettings /> Settings
+                    </button>
+                </div>
             </div>
 
             <div className="profileSections">

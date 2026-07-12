@@ -6,6 +6,7 @@ export type Blog = {
   title: string
   content: string
   cover: string
+  created_at: string
   author_name: string
   profile_picture: string | null
   liked_count: number

@@ -1,41 +1,37 @@
-import { useNavigate } from "react-router-dom"
-import useUser from "../hooks/useUser"
-import api from "../apis/api"
-import { queryClient } from "../main"
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
-    const navigate = useNavigate()
-    const { data: user } = useUser()
-
-    const handleLogout = async () => {
-        try {
-            await api.post("/auth/logout")
-        } catch(error) {
-            console.log(error)
-        }
-        localStorage.removeItem("access_token")
-        queryClient.removeQueries({ queryKey: ["user"] })
-        navigate("/login")
-    }
+    const navigate = useNavigate();
 
     return (
-        <div className="routeState">
-            <h3>Welcome{user?.username ? `, ${user.username}` : ""}</h3>
-            <p>You are signed in.</p>
-            <button className="primaryButton" onClick={handleLogout}>
-                Logout
-            </button>
-            <button className="primaryButton" onClick={() => navigate("/create")}>
-                Create Blog
-            </button>
-            <button className="primaryButton" onClick={() => navigate("/blogs")}>
-                View Blogs
-            </button>
-            <button className="primaryButton" onClick={() => navigate("/profile")}>
-                Profile
-            </button>
+        <div className="landing">
+            <div className="landingHero">
+                <span className="landingBadge">Connecting Voices</span>
+                <h1>
+                    Welcome to <span className="navLogoAccent">BlogSphere</span>
+                </h1>
+                <p className="landingLead">
+                    A place to write, share, and discover stories. Publish rich
+                    posts with images, react to what you love, and join the
+                    conversation.
+                </p>
+                <div className="landingActions">
+                    <button
+                        className="primaryButton"
+                        onClick={() => navigate("/register")}
+                    >
+                        Get started
+                    </button>
+                    <button
+                        className="secondaryButton"
+                        onClick={() => navigate("/login")}
+                    >
+                        Sign in
+                    </button>
+                </div>
+            </div>
         </div>
-    )
+    );
 }
 
-export default HomePage
+export default HomePage;
