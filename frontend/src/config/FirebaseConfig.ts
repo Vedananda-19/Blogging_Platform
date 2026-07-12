@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const config = {
-    apiKey: "AIzaSyDWmyY-0qSRLhzFLFBAeBuwP4EO0LXj5tI",
+    apiKey: `${import.meta.env.VITE_FIREBASE_API_KEY}`,
     authDomain: "learning-authentication-19cd1.firebaseapp.com",
     projectId: "learning-authentication-19cd1",
     storageBucket: "learning-authentication-19cd1.firebasestorage.app",
