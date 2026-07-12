@@ -1,0 +1,22 @@
+name: Docker CI
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Cloning Repository
+              uses: action/checkout@v4
+
+            - name: Building Containers
+              run: docker compose up
+            
+            - name: Container Status
+              run: docker ps
+
+            - name: Closing Containers
+              run: docker compose down
