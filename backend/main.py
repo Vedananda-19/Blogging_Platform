@@ -12,7 +12,7 @@ load_dotenv()
 
 Base.metadata.create_all(bind=engine)
 
-allowed_origins = ["http://localhost:5173", "blogging-platform-olive.vercel.app"]
+allowed_origins = ["http://localhost:5173", "https://blogging-platform-olive.vercel.app"]
 
 async def lifespan(app:FastAPI):
     cloudinary.config(
