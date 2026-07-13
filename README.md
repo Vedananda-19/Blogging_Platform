@@ -4,46 +4,38 @@ A full-stack blogging platform where people write rich posts, react and discuss,
 
 ## Live Demo
 
-**Frontend:** https://blogging-platform-olive.vercel.app/
+- **Frontend:** [BlogSphere](https://blogging-platform-olive.vercel.app/)
 
-**Backend API (Swagger docs):** https://blogging-platform-tudc.onrender.com/docs
-
+- **Backend API:** [Swagger Docs](https://blogging-platform-tudc.onrender.com/docs)
 
 ---
 
 ## Features
 
-- Secure registration & login with JWT (rotating refresh tokens) + **Google Sign-In**
-- Rich-text blog editor (TipTap) with headings, lists, quotes, code and **image uploads**
+- Secure registration & login with JWT + Google Sign-In
+- Rich-text blog editor (TipTap) with image uploads
 - Create, edit, and delete your own posts (owner-only, enforced server-side)
-- Blog feed with **search, sorting (recent / top)**, and cursor-based **infinite scroll**
-- **Likes / dislikes, saves, and comments** (comment likes, sorted by popularity, paginated)
-- **Follow / unfollow** authors, a personal **Following feed**, and dedicated author pages
-- **Top authors** leaderboard ranked by an engagement score
-- Profile with live stats — followers, following, posts, comments — and Your Blogs / Liked / Saved / Commented lists
-- Editable profile (username + avatar via Cloudinary)
-- Responsive **navbar + sidebar** layout
-- **Dark & light mode** support
+- Blog feed with Searching, Sorting & Infinite Scroll
+- Likes / dislikes, saves, and comments
+- Following feed, Dedicated author pages & Top Authors
+- Profile with live stats — followers, following, posts, comments
 - Cloud image storage (Cloudinary) and persistent PostgreSQL database
 
 ## Tech Stack
 
 ### Frontend
-- React + TypeScript (Vite)
-- TanStack Query (React Query) for server state
-- React Router
+- React + TypeScript
+- TanStack Query
 - TipTap rich-text editor
 - Firebase (Google OAuth)
-- Axios
 
 <sub>_Note:JSX and Styling was assisted by AI._</sub>
 
 ### Backend
 - FastAPI
-- SQLAlchemy ORM + Pydantic
+- SQLAlchemy ORM
 - python-jose (JWT) + passlib / bcrypt
 - Cloudinary (image uploads)
-- Google Auth (OAuth token verification)
 
 ### Database
 - PostgreSQL (Neon) in production
@@ -57,10 +49,6 @@ A full-stack blogging platform where people write rich posts, react and discuss,
 - Containerised with **Docker & Docker Compose**
 - **GitHub Actions** CI (build, health-check, push images to Docker Hub)
 
-## Live Demo
-
-- **Frontend:** [BlogSphere](https://blogging-platform-olive.vercel.app/)
-- **Backend API:** [Swagger Docs](https://blogging-platform-tudc.onrender.com/docs)
 
 ## Project Structure
 
@@ -83,44 +71,12 @@ Blogging_Platform
 ├── frontend
 │   ├── public
 │   └── src
-│       ├── apis
-│       │   └── api.ts
-│       ├── components
-│       │   ├── AuthorDetailsItem.tsx
-│       │   ├── BlogCard.tsx
-│       │   ├── BlogEditor.tsx
-│       │   ├── CommentSection.tsx
-│       │   ├── EditProfileModal.tsx
-│       │   ├── FileUpload.tsx
-│       │   ├── Navbar.tsx
-│       │   ├── ProfileBlogList.tsx
-│       │   ├── QueryBlogList.tsx
-│       │   └── Sidebar.tsx
-│       ├── config
-│       │   └── FirebaseConfig.ts
-│       ├── hooks
-│       │   ├── useBlog.ts
-│       │   ├── useBlogComments.ts
-│       │   ├── useBlogs.ts
-│       │   ├── useFollowingBlogs.ts
-│       │   ├── useTopUsers.ts
-│       │   ├── useUpdateBlogs.ts
-│       │   ├── useUser.ts
-│       │   ├── useUserDetails.ts
-│       │   └── useUserLists.ts
-│       ├── layouts
-│       │   └── RootLayout.tsx
-│       ├── pages
-│       │   ├── AuthorPage.tsx
-│       │   ├── BlogDetailPage.tsx
-│       │   ├── BlogFormPage.tsx
-│       │   ├── BlogsPage.tsx
-│       │   ├── EditBlogPage.tsx
-│       │   ├── HomePage.tsx
-│       │   ├── LoginPage.tsx
-│       │   ├── ProfilePage.tsx
-│       │   ├── RegisterPage.tsx
-│       │   └── SettingsPage.tsx
+│       ├── apis          # axios instance + auth/refresh interceptors
+│       ├── components    # BlogCard, Navbar, Sidebar, CommentSection, editor, ...
+│       ├── config        # Firebase (Google auth) config
+│       ├── hooks         # React Query data & mutation hooks
+│       ├── layouts       # RootLayout (navbar + sidebar shell)
+│       ├── pages         # Blogs, BlogDetail, Author, Profile, Settings, auth, ...
 │       ├── App.tsx
 │       └── main.tsx
 ├── compose.yaml

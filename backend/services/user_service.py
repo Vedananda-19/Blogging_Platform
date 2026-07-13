@@ -42,7 +42,7 @@ def get_commented_blog_ids(db: Session, user: CurrentUser):
 
 
 def get_top_users(db: Session) -> list[str]:
-    # score = posts + followers + (total likes received / 5); return top-10 ids.
+    # score = followers + (likes / 4) + (posts / 2); return top-10 ids.
     rows = (
         db.query(
             Users.id,
@@ -55,7 +55,7 @@ def get_top_users(db: Session) -> list[str]:
         .all()
     )
     scored = [
-        (uid, posts + (followers or 0) + likes / 5)
+        (uid, (followers or 0) + likes / 4 + posts / 2)
         for uid, followers, posts, likes in rows
     ]
     scored.sort(key=lambda x: x[1], reverse=True)
@@ -160,6 +160,7 @@ def get_commented_blogs(db: Session, user: CurrentUser):
     for c in db_user.comments:
         unique.setdefault(c.blog_id, c.blog)
     return blogs_out(unique.values())
+
 
 def follow(author_id: str, db: Session, user: CurrentUser):
     if author_id == user.user_id:

@@ -16,7 +16,6 @@ const RootLayout = () => {
         );
     }
 
-    // Logged out: only the landing ("/") is allowed — bounce any other path to it.
     if (!user) {
         if (location.pathname !== "/") {
             return <Navigate to="/" replace />;

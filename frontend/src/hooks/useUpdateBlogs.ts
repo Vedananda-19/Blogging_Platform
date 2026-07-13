@@ -18,44 +18,11 @@ const useUpdateBlogs = () => {
         );
     };
 
-    const snapshot = (key: string[]) =>
-        queryClient.getQueryData<string[]>(key) ?? [];
-
-    const setNewIds = (key: string[], id: string, list: string[]) =>
-        queryClient.setQueryData(
-            key,
-            list.includes(id) ? list.filter((x) => x !== id) : [...list, id],
-        );
-
     const likeMutationResult = useMutation({
         mutationFn: async (blog_id: string) => {
             await api.post(`/blog/like/${blog_id}`);
         },
-        onMutate: async (blog_id) => {
-            await queryClient.cancelQueries({ queryKey: ["likedBlogs"] });
-            await queryClient.cancelQueries({ queryKey: ["dislikedBlogs"] });
-            const prevLiked = snapshot(["likedBlogs"]);
-            const prevDisliked = snapshot(["dislikedBlogs"]);
-            const isLiked = prevLiked.includes(blog_id);
-            queryClient.setQueryData(
-                ["likedBlogs"],
-                isLiked
-                    ? prevLiked.filter((x) => x !== blog_id)
-                    : [...prevLiked, blog_id],
-            );
-            if (!isLiked)
-                queryClient.setQueryData(
-                    ["dislikedBlogs"],
-                    prevDisliked.filter((x) => x !== blog_id),
-                );
-            return { prevLiked, prevDisliked };
-        },
-        onError: (_e, _v, ctx) => {
-            if (!ctx) return;
-            queryClient.setQueryData(["likedBlogs"], ctx.prevLiked);
-            queryClient.setQueryData(["dislikedBlogs"], ctx.prevDisliked);
-        },
-        onSettled: () => {
+        onSuccess: () => {
             invalidateBlogs();
             invalidateReactions();
         },
@@ -65,31 +32,7 @@ const useUpdateBlogs = () => {
         mutationFn: async (blog_id: string) => {
             await api.post(`/blog/dislike/${blog_id}`);
         },
-        onMutate: async (blog_id) => {
-            await queryClient.cancelQueries({ queryKey: ["likedBlogs"] });
-            await queryClient.cancelQueries({ queryKey: ["dislikedBlogs"] });
-            const prevLiked = snapshot(["likedBlogs"]);
-            const prevDisliked = snapshot(["dislikedBlogs"]);
-            const isDisliked = prevDisliked.includes(blog_id);
-            queryClient.setQueryData(
-                ["dislikedBlogs"],
-                isDisliked
-                    ? prevDisliked.filter((x) => x !== blog_id)
-                    : [...prevDisliked, blog_id],
-            );
-            if (!isDisliked)
-                queryClient.setQueryData(
-                    ["likedBlogs"],
-                    prevLiked.filter((x) => x !== blog_id),
-                );
-            return { prevLiked, prevDisliked };
-        },
-        onError: (_e, _v, ctx) => {
-            if (!ctx) return;
-            queryClient.setQueryData(["likedBlogs"], ctx.prevLiked);
-            queryClient.setQueryData(["dislikedBlogs"], ctx.prevDisliked);
-        },
-        onSettled: () => {
+        onSuccess: () => {
             invalidateBlogs();
             invalidateReactions();
         },
@@ -99,16 +42,7 @@ const useUpdateBlogs = () => {
         mutationFn: async (blog_id: string) => {
             await api.post(`/blog/save/${blog_id}`);
         },
-        onMutate: async (blog_id) => {
-            await queryClient.cancelQueries({ queryKey: ["savedBlogs"] });
-            const prev = snapshot(["savedBlogs"]);
-            setNewIds(["savedBlogs"], blog_id, prev);
-            return { prev };
-        },
-        onError: (_e, _v, ctx) => {
-            if (ctx) queryClient.setQueryData(["savedBlogs"], ctx.prev);
-        },
-        onSettled: () => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["savedBlogs"] });
             queryClient.invalidateQueries({ queryKey: ["savedBlogsFull"] });
         },
@@ -118,16 +52,7 @@ const useUpdateBlogs = () => {
         mutationFn: async (comment_id: string) => {
             await api.post(`/blog/like-comment/${comment_id}`);
         },
-        onMutate: async (comment_id) => {
-            await queryClient.cancelQueries({ queryKey: ["likedComments"] });
-            const prev = snapshot(["likedComments"]);
-            setNewIds(["likedComments"], comment_id, prev);
-            return { prev };
-        },
-        onError: (_e, _v, ctx) => {
-            if (ctx) queryClient.setQueryData(["likedComments"], ctx.prev);
-        },
-        onSettled: () => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["likedComments"] });
             queryClient.invalidateQueries({ queryKey: ["comments"] });
         },
@@ -139,8 +64,14 @@ const useUpdateBlogs = () => {
         },
         onMutate: async (author_id) => {
             await queryClient.cancelQueries({ queryKey: ["following"] });
-            const prev = snapshot(["following"]);
-            setNewIds(["following"], author_id, prev);
+            const prev =
+                queryClient.getQueryData<string[]>(["following"]) ?? [];
+            queryClient.setQueryData(
+                ["following"],
+                prev.includes(author_id)
+                    ? prev.filter((x) => x !== author_id)
+                    : [...prev, author_id],
+            );
             return { prev };
         },
         onError: (_e, _v, ctx) => {

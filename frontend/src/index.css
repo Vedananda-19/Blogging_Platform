@@ -1377,20 +1377,20 @@ input::placeholder { color: var(--color-text-secondary); }
    LIGHT THEME (applied when <html data-theme="light">)
    ============================================================ */
 :root[data-theme="light"] {
-  --color-brand:           #6366f1;
-  --color-brand-hover:     #4f46e5;
-  --color-brand-subtle:    #e0e7ff;
-  --color-danger:          #e11d48;
-  --color-page-bg:         #f5f6fb;
-  --color-surface:         #ffffff;
-  --color-border:          #e3e6ef;
-  --color-border-soft:     #d5d9e4;
-  --color-border-inner:    #e8eaf2;
-  --color-text-primary:    #1a1b2e;
-  --color-text-secondary:  #5b6472;
-  --color-text-tertiary:   #6b7280;
-  --color-surface-hover:   #eef0f7;
-  --shadow-card:    0 5px 18px rgba(20, 20, 40, 0.08);
+  --color-brand:           #5b5fe0;
+  --color-brand-hover:     #4a4fd0;
+  --color-brand-subtle:    #dcdefb;
+  --color-danger:          #d43d5f;
+  --color-page-bg:         #e2e3ea;
+  --color-surface:         #f1f2f7;
+  --color-border:          #cfd1dd;
+  --color-border-soft:     #c0c3d1;
+  --color-border-inner:    #d7d9e2;
+  --color-text-primary:    #2b2d3c;
+  --color-text-secondary:  #5c6475;
+  --color-text-tertiary:   #6d7486;
+  --color-surface-hover:   #e8e9f0;
+  --shadow-card:    0 4px 14px rgba(30, 30, 50, 0.06);
 }
 
 /* Settings page */

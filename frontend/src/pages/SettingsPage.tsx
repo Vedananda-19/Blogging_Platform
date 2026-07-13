@@ -20,9 +20,9 @@ const SettingsPage = () => {
         <div className="profilePage">
             <button
                 className="secondaryButton backButton"
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate(-1)}
             >
-                <LuArrowLeft /> Back to Profile
+                <LuArrowLeft /> Back
             </button>
             <div className="profileSubHeader">
                 <h1>Settings</h1>

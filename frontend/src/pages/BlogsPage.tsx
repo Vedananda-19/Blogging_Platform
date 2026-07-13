@@ -26,10 +26,14 @@ const BlogsPage = () => {
         <div className="blogsLayout">
             <QueryBlogList query={query} isFollowing={isFollowing} />
             <aside className="authorSidebar">
-                <h3>Top authors</h3>
-                {topIds?.map((id) => (
-                    <AuthorDetailsItem key={id} author_id={id} />
-                ))}
+                {!isFollowing && (
+                    <>
+                        <h3>Top authors</h3>
+                        {topIds?.map((id) => (
+                            <AuthorDetailsItem key={id} author_id={id} />
+                        ))}
+                    </>
+                )}
 
                 <h3>People you follow</h3>
                 {isLoading && <p className="authorItemMuted">Loading…</p>}
