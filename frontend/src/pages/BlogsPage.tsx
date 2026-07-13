@@ -13,7 +13,6 @@ const BlogsPage = () => {
     const location = useLocation();
     const isFollowing = location.pathname.endsWith("/following");
 
-    // The main blogs feed defaults to "top" (the following feed keeps "recent").
     useEffect(() => {
         if (!isFollowing && !searchParams.get("sort")) {
             const params = new URLSearchParams(searchParams);
@@ -21,8 +20,7 @@ const BlogsPage = () => {
             setSearchParams(params, { replace: true });
         }
     }, [isFollowing, searchParams, setSearchParams]);
-
-    // Both hooks are always called (Rules of Hooks); only the active one is enabled.
+    
     const blogsQuery = useBlogs(searchParams, !isFollowing);
     const followingQuery = useFollowingBlogs(searchParams, isFollowing);
     const query = isFollowing ? followingQuery : blogsQuery;

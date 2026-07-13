@@ -236,8 +236,6 @@ def get_blog_comments(
     else:
         base = base.order_by(BlogComments.created_at.desc())
 
-    # Sort + paginate in SQL; eager-load the author to avoid an N+1 on
-    # username / profile_picture during serialization.
     page_items = (
         base.options(joinedload(BlogComments.user))
         .offset((page - 1) * limit)

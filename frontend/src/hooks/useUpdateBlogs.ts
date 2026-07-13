@@ -5,7 +5,6 @@ import type { CommentModel } from "../components/CommentSection";
 const useUpdateBlogs = () => {
     const queryClient = useQueryClient();
 
-    // These are helper functions
     const invalidateBlogs = () => {
         ["blogs", "blog"].forEach((key) =>
             queryClient.invalidateQueries({ queryKey: [key] }),

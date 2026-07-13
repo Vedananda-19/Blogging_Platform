@@ -13,9 +13,6 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Single-flight refresh: only one /auth/refresh is ever in flight. Concurrent
-// 401s all await the same promise, so the rotating refresh token rotates once
-// and no request is left holding a stale cookie (which would spuriously log out).
 let refreshPromise: Promise<string> | null = null;
 
 const refreshAccessToken = (): Promise<string> => {

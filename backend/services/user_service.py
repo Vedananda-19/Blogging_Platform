@@ -42,7 +42,6 @@ def get_commented_blog_ids(db: Session, user: CurrentUser):
 
 
 def get_top_users(db: Session) -> list[str]:
-    # score = followers + (likes / 4) + (posts / 2); return top-10 ids.
     rows = (
         db.query(
             Users.id,

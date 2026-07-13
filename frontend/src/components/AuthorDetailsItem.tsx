@@ -10,8 +10,6 @@ const AuthorDetailsItem = ({ author_id }: { author_id: string }) => {
     const { followMutationResult } = useUpdateBlogs();
     const { mutateAsync: toggleFollow } = followMutationResult;
 
-    // Profile page renders a full-width row with an unfollow button;
-    // elsewhere (Blogs / Following) it's a compact clickable card.
     const asRow = location.pathname.startsWith("/profile");
 
     if (isLoading) {

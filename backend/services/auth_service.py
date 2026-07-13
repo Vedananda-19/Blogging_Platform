@@ -56,8 +56,6 @@ def create_access_token(user: Users):
 
 def create_refresh_token(user: Users, db: Session, device: str):
     expiry = datetime.now(timezone.utc) + timedelta(days=30)
-    # jti makes every issued token unique (exp is only 1-second resolution), so
-    # rotation always produces a genuinely new token.
     encode_data = {
         "id": user.id,
         "sub": user.username,
@@ -87,8 +85,7 @@ def set_refresh_cookie(response: Response, token: str):
         secure=True,
         path="/auth",
         max_age=30 * 24 * 60 * 60,
-        partitioned=True,  # CHIPS: keeps the cross-site cookie working under
-        # third-party-cookie blocking (frontend + backend on different domains)
+        partitioned=True,
     )
 
 
@@ -98,7 +95,7 @@ def verify_login(
     user = db.query(Users).filter(Users.username == username).first()
     if not user:
         raise HTTPException(400, "Username does not exist")
-    if not user.password:  # e.g. Google-only account has no local password
+    if not user.password:
         raise HTTPException(400, "Invalid Credentials")
     if not pwd_context.verify(password, user.password):
         raise HTTPException(400, "Invalid Credentials")

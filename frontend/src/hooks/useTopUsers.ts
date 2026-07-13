@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../apis/api";
 
-// Top authors by score (posts + followers + likes/5) — returns author ids.
 const useTopUsers = () =>
     useQuery<string[]>({
         queryKey: ["topUsers"],
