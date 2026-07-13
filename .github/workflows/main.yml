@@ -20,29 +20,8 @@ jobs:
             - name: Cloning Repository
               uses: actions/checkout@v4
 
-            - name: Debug secrets (masked-safe, no values printed)
-              run: |
-                echo "--- runner env ---"
-                for v in DATABASE_URL JWT_SECRET_KEY GOOGLE_CLIENT_ID CLOUDINARY_CLOUD_NAME CLOUDINARY_API_KEY CLOUDINARY_API_SECRET DOCKER_USERNAME; do
-                  if [ -z "${!v}" ]; then echo "$v = MISSING"; else echo "$v = set (len ${#v})"; fi
-                done
-                echo "--- DATABASE_URL sanity ---"
-                echo "scheme = ${DATABASE_URL%%://*}"
-                case "$DATABASE_URL" in
-                  postgresql://*) echo "prefix: OK" ;;
-                  "") echo "prefix: EMPTY" ;;
-                  *) echo "prefix: UNEXPECTED (not postgresql://)" ;;
-                esac
-                case "$DATABASE_URL" in
-                  *require) echo "suffix: OK (ends in ...require)" ;;
-                  *) echo "suffix: BAD — trailing newline/space/quote?" ;;
-                esac
-
             - name: Building Containers
               run: docker compose up -d --build
-
-            - name: Debug container env (what the backend actually gets)
-              run: docker compose run --rm --entrypoint sh backend -c 'echo "container: len=${#DATABASE_URL} scheme=${DATABASE_URL%%://*}"'
 
             - name: Container Status
               run: docker ps
