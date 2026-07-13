@@ -20,7 +20,6 @@ const EditBlogPage = () => {
         return <Navigate to="/blogs" replace />;
     }
 
-    // UX guard — the backend PUT/DELETE is the authoritative check (403).
     if (user && blog.author_name !== user.username) {
         return <Navigate to={`/blogs/${blog.id}`} replace />;
     }

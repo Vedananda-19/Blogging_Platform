@@ -29,6 +29,7 @@ class Users(Base):
     auth_provider = Column(String)
     photo_url = Column(String, nullable=True)
     photo_id = Column(String, nullable=True)
+    follow_count = Column(Integer, default=0)
 
     blogs = relationship("Blogs", back_populates="author")
     liked_blogs = relationship("BlogLikes",back_populates="user")
@@ -124,6 +125,12 @@ class CommentLikes(Base):
     comment_id = Column(String, ForeignKey("blog_comments.id"), primary_key=True)
     user_id = Column(String, ForeignKey("users.id"), primary_key=True)
 
+class Follows(Base):
+    __tablename__ = "follows"
+
+    user_id = Column(String, ForeignKey("users.id"), primary_key=True)
+    author_id = Column(String, ForeignKey("users.id"), primary_key=True)
+
 
 # Validation Models - Pydantic validation models when routes recieve data
 # (very useful and almost necessary when sending data to fastapi)
@@ -135,7 +142,7 @@ class RegisterModel(BaseModel):
     confirmPassword: str
 
 
-class GoogleToken(BaseModel):
+class StringModel(BaseModel):
     google_token: str
 
 
@@ -167,6 +174,7 @@ class BlogOut(BaseModel):
     model_config = {"from_attributes": True}
 
     id: str
+    user_id: str
     title: str
     content: str
     cover: str
@@ -219,3 +227,13 @@ class UserOut(BaseModel):
     username: str
     photo_url: str | None = None
 
+
+class UserDetailsOut(BaseModel):
+    user_id: str
+    username: str
+    photo_url: str | None = None
+    follow_count: int
+    following_count: int
+    post_count: int
+    comment_count: int
+    following_author_ids: list[str]

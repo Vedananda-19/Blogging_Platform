@@ -9,6 +9,7 @@ import EditBlogPage from "./pages/EditBlogPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileBlogList from "./components/ProfileBlogList";
 import SettingsPage from "./pages/SettingsPage";
+import AuthorPage from "./pages/AuthorPage";
 import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
@@ -18,8 +19,10 @@ const router = createBrowserRouter([
             { path: "/", element: <Navigate to="/blogs" replace /> },
             { path: "/create", element: <BlogFormPage /> },
             { path: "/blogs", element: <BlogsPage /> },
+            { path: "/following", element: <BlogsPage /> },
             { path: "/blogs/:id", element: <BlogDetailPage /> },
             { path: "/blogs/:id/edit", element: <EditBlogPage /> },
+            { path: "/author/:authorId", element: <AuthorPage /> },
             { path: "/profile", element: <ProfilePage /> },
             {
                 path: "/profile/blogs",

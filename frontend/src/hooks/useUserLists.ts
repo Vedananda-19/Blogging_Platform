@@ -9,10 +9,7 @@ const fetchData = (url: string) => async () => {
 
 export type FullList = "myBlogs" | "likedBlogs" | "savedBlogs" | "commentedBlogs";
 
-// Pass a `fullList` to enable that full-blog query. The id-sets (used for
-// button highlighting) always load; the heavier full-blog lists only load on
-// the profile page that asks for them.
-const useUserBlogs = (fullList?: FullList) => {
+const useUserLists = (fullList?: FullList) => {
     const liked = useQuery({ queryKey: ["likedBlogs"],
          queryFn: fetchData("/user/liked") });
     const disliked = useQuery({ queryKey: ["dislikedBlogs"],
@@ -21,6 +18,10 @@ const useUserBlogs = (fullList?: FullList) => {
          queryFn: fetchData("/user/saved") });
     const commented = useQuery({ queryKey: ["commentedBlogs"],
          queryFn: fetchData("/user/commented") });
+    const following = useQuery({ queryKey: ["following"],
+         queryFn: fetchData("/user/following") });
+    const likedComments = useQuery({ queryKey: ["likedComments"],
+         queryFn: fetchData("/user/liked-comments") });
 
     const myBlogs = useQuery<Blog[]>({
         queryKey: ["myBlogs"],
@@ -44,10 +45,12 @@ const useUserBlogs = (fullList?: FullList) => {
     });
 
     return {
-        likedSet: new Set(liked.data ?? []),
-        dislikedSet: new Set(disliked.data ?? []),
-        savedSet: new Set(saved.data ?? []),
-        commentedSet: new Set(commented.data ?? []),
+        likedSet: new Set<string>(liked.data ?? []),
+        dislikedSet: new Set<string>(disliked.data ?? []),
+        savedSet: new Set<string>(saved.data ?? []),
+        commentedSet: new Set<string>(commented.data ?? []),
+        followingSet: new Set<string>(following.data ?? []),
+        likedCommentsSet: new Set<string>(likedComments.data ?? []),
         myBlogs,
         likedBlogs,
         savedBlogs,
@@ -55,4 +58,4 @@ const useUserBlogs = (fullList?: FullList) => {
     };
 };
 
-export default useUserBlogs;
+export default useUserLists;

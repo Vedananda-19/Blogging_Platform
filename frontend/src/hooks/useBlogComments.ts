@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import api from "../apis/api";
 
 export type Comment = {
@@ -20,19 +20,23 @@ export type CommentsPage = {
 
 const useBlogComments = (
     blog_id: string,
-    page: number = 1,
     limit: number = 10,
     enabled: boolean = true,
 ) => {
-    return useQuery<CommentsPage>({
-        queryKey: ["comments", blog_id, page, limit],
-        queryFn: async () => {
+    return useInfiniteQuery({
+        queryKey: ["comments", blog_id, limit],
+        queryFn: async ({ pageParam }): Promise<CommentsPage> => {
             const response = await api.get(`/blog/comments/${blog_id}`, {
-                params: { page, limit },
+                params: { page: pageParam, limit, sort: "top" },
             });
             return response.data;
         },
         enabled: enabled && !!blog_id,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages) =>
+            allPages.length < lastPage.page_count
+                ? allPages.length + 1
+                : undefined,
     });
 };
 

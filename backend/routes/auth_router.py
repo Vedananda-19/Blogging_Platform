@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from database import db_dependency
-from models import RegisterModel, CurrentUser, GoogleToken, Users, UserOut
+from models import RegisterModel, CurrentUser, StringModel, Users, UserOut
 from services import auth_service
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
@@ -56,7 +56,7 @@ def logout(request: Request, response: Response, db: db_dependency):
 
 @auth_router.post("/google")
 def google_verification(
-    response: Response, request: Request, body: GoogleToken, db: db_dependency
+    response: Response, request: Request, body: StringModel, db: db_dependency
 ):
     ua_string = request.headers.get("User-Agent")
     return auth_service.login_with_google(

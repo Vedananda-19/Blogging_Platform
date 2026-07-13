@@ -8,10 +8,13 @@ import {
     LuBookmark,
     LuMessageCircle,
     LuArrowLeft,
+    LuUserPlus,
+    LuUserCheck,
 } from "react-icons/lu";
 import useBlog from "../hooks/useBlog";
-import useUserBlogs from "../hooks/useUserBlogs";
+import useUserLists from "../hooks/useUserLists";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
+import useUser from "../hooks/useUser";
 import CommentSection from "../components/CommentSection";
 
 const BlogDetailPage = () => {
@@ -19,12 +22,19 @@ const BlogDetailPage = () => {
     const navigate = useNavigate();
 
     const { data: blog, isLoading, isError } = useBlog(id);
-    const { likedSet, dislikedSet, savedSet, commentedSet } = useUserBlogs();
-    const { likeMutationResult, dislikeMutationResult, saveMutationResult } =
-        useUpdateBlogs();
+    const { data: user } = useUser();
+    const { likedSet, dislikedSet, savedSet, commentedSet, followingSet } =
+        useUserLists();
+    const {
+        likeMutationResult,
+        dislikeMutationResult,
+        saveMutationResult,
+        followMutationResult,
+    } = useUpdateBlogs();
     const { mutateAsync: likeBlog } = likeMutationResult;
     const { mutateAsync: dislikeBlog } = dislikeMutationResult;
     const { mutateAsync: saveBlog } = saveMutationResult;
+    const { mutateAsync: followAuthor } = followMutationResult;
 
     if (isLoading) {
         return (
@@ -64,11 +74,41 @@ const BlogDetailPage = () => {
 
             <h1>{blog.title}</h1>
 
-            <div className="blogAuthor">
+            <div
+                className="blogAuthor authorLink"
+                role="link"
+                tabIndex={0}
+                onClick={() => navigate(`/author/${blog.user_id}`)}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate(`/author/${blog.user_id}`);
+                    }
+                }}
+            >
                 <div className="authorPhoto">
                     <img src={blog.profile_picture || "/default_pfp.png"} alt="pfp" />
                 </div>
                 <p className="blogMeta">by {blog.author_name}</p>
+                {user && user.id !== blog.user_id && (
+                    <button
+                        className={`followButton${followingSet.has(blog.user_id) ? " active" : ""}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            followAuthor(blog.user_id);
+                        }}
+                    >
+                        {followingSet.has(blog.user_id) ? (
+                            <>
+                                <LuUserCheck /> Following
+                            </>
+                        ) : (
+                            <>
+                                <LuUserPlus /> Follow
+                            </>
+                        )}
+                    </button>
+                )}
             </div>
 
             {blog.cover && (
@@ -117,7 +157,7 @@ const BlogDetailPage = () => {
                 <h2 className="commentsHeading">
                     Comments ({blog.comment_count})
                 </h2>
-                <CommentSection blogId={blog.id} limit={20} />
+                <CommentSection blogId={blog.id} limit={10} paginate />
             </section>
         </div>
     );

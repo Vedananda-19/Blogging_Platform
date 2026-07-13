@@ -17,9 +17,20 @@ def create_blog(blogData: CreateBlogModel, db: db_dependency, user: user_depende
 
 @blog_router.get("/blogs", response_model=PaginatedBlogs)
 def get_blogs(
-    db: db_dependency, cursor: datetime | None = None, limit: int = 10, search: str = "", sort: str = "recent"
+    db: db_dependency,
+    cursor: datetime | None = None,
+    limit: int = 10,
+    search: str = "",
+    sort: str = "recent",
+    author: str | None = None,
 ):
-    return blog_service.get_blogs(cursor, limit, search, sort, db)
+    return blog_service.get_blogs(cursor, limit, search, sort, db, author=author)
+
+@blog_router.get("/blogs/following", response_model=PaginatedBlogs)
+def get_following_blogs(
+    db: db_dependency, user: user_dependency, cursor: datetime | None = None, limit: int = 10, search: str = "", sort: str = "recent"
+):
+    return blog_service.get_blogs(cursor, limit, search, sort, db, user, following=True)
 
 
 @blog_router.post("/like/{blog_id}")
@@ -82,4 +93,3 @@ def delete_blog(blog_id: str, db: db_dependency, user: user_dependency):
 @blog_router.post("/image/upload")
 async def upload_image(user: user_dependency, file: UploadFile = File(...)):
     return await blog_service.upload_image(file)
-

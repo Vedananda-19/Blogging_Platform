@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { LuThumbsUp } from "react-icons/lu";
 import useBlogComments from "../hooks/useBlogComments";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
+import useUserLists from "../hooks/useUserLists";
 
 type Props = {
     blogId: string;
     limit?: number;
     enabled?: boolean;
+    paginate?: boolean;
 };
 
 export type CommentModel = {
@@ -13,17 +16,27 @@ export type CommentModel = {
     comment: string;
 };
 
-const CommentSection = ({ blogId, limit = 3, enabled = true }: Props) => {
+const CommentSection = ({
+    blogId,
+    limit = 3,
+    enabled = true,
+    paginate = false,
+}: Props) => {
     const [draft, setDraft] = useState("");
-    const { data, isLoading, isError } = useBlogComments(
-        blogId,
-        1,
-        limit,
-        enabled,
-    );
-    const { commentMutationResult } = useUpdateBlogs();
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useBlogComments(blogId, limit, enabled);
+    const { commentMutationResult, likeCommentMutationResult } = useUpdateBlogs();
     const { mutateAsync: addComment, isPending } = commentMutationResult;
-    const comments = data?.comments ?? [];
+    const { mutateAsync: likeComment } = likeCommentMutationResult;
+    const { likedCommentsSet } = useUserLists();
+    const comments = data?.pages.flatMap((p) => p.comments) ?? [];
+    const totalCount = data?.pages[0]?.comment_count ?? 0;
 
     const postComment = () => {
         const text = draft.trim();
@@ -72,14 +85,35 @@ const CommentSection = ({ blogId, limit = 3, enabled = true }: Props) => {
                         <div className="commentBody">
                             <span className="commentAuthor">{c.username}</span>
                             <p className="commentText">{c.comment}</p>
-                            <span className="commentMeta">
-                                {new Date(c.created_at).toLocaleDateString()} ·{" "}
-                                {c.comment_likes} likes
-                            </span>
+                            <div className="commentFooter">
+                                <span className="commentMeta">
+                                    {new Date(c.created_at).toLocaleDateString()}
+                                </span>
+                                <button
+                                    className={`commentLikeButton${likedCommentsSet.has(c.id) ? " active" : ""}`}
+                                    onClick={() => likeComment(c.id)}
+                                    title="Like comment"
+                                >
+                                    <LuThumbsUp />
+                                    <span>{c.comment_likes}</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {paginate && hasNextPage && (
+                <button
+                    className="linkButton"
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                >
+                    {isFetchingNextPage
+                        ? "Loading…"
+                        : `Load more comments (${totalCount - comments.length} more)`}
+                </button>
+            )}
         </div>
     );
 };

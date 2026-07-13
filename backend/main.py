@@ -39,3 +39,8 @@ app.include_router(user_router)
 @app.get("/")
 def home():
     return "Home"
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

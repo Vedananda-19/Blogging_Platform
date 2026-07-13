@@ -30,10 +30,7 @@ const Navbar = ({ user }: { user?: User | null }) => {
     return (
         <header className="navbar">
             <Link to="/" className="navLogo">
-                <span className="navLogoMark">B</span>
-                <span className="navLogoText">
-                    Blog<span className="navLogoAccent">Sphere</span>
-                </span>
+                <img className="navLogoImg" src="/logo.png" alt="BlogSphere" />
             </Link>
 
             <div className="navRight">

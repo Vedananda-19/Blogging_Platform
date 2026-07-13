@@ -10,9 +10,12 @@ import {
     LuMessageCircle,
     LuPencil,
     LuTrash2,
+    LuUserPlus,
+    LuUserCheck,
 } from "react-icons/lu";
 import type { Blog } from "../hooks/useBlogs";
 import useUpdateBlogs from "../hooks/useUpdateBlogs";
+import useUser from "../hooks/useUser";
 import CommentSection from "./CommentSection";
 
 type Props = {
@@ -22,6 +25,7 @@ type Props = {
     saved?: boolean;
     commented?: boolean;
     editable?: boolean;
+    following?: boolean;
 };
 
 const renderContent = (content: string) => {
@@ -41,20 +45,24 @@ const BlogCard = ({
     saved,
     commented,
     editable,
+    following,
 }: Props) => {
     const navigate = useNavigate();
     const [showComments, setShowComments] = useState(false);
+    const { data: user } = useUser();
 
     const {
         likeMutationResult,
         dislikeMutationResult,
         saveMutationResult,
         deleteMutationResult,
+        followMutationResult,
     } = useUpdateBlogs();
     const { mutateAsync: likeBlog } = likeMutationResult;
     const { mutateAsync: dislikeBlog } = dislikeMutationResult;
     const { mutateAsync: saveBlog } = saveMutationResult;
     const { mutateAsync: deleteBlog } = deleteMutationResult;
+    const { mutateAsync: followAuthor } = followMutationResult;
 
     const handleDelete = () => {
         if (window.confirm("Delete this blog? This cannot be undone.")) {
@@ -91,7 +99,14 @@ const BlogCard = ({
                     </div>
                 )}
             </div>
-            <div className="blogAuthor">
+            <div
+                className="blogAuthor authorLink"
+                role="link"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/author/${blog.user_id}`);
+                }}
+            >
                 <div className="authorPhoto">
                     <img
                         src={blog.profile_picture || "/default_pfp.png"}
@@ -102,6 +117,30 @@ const BlogCard = ({
                     by {blog.author_name} ·{" "}
                     {new Date(blog.created_at).toLocaleDateString()}
                 </p>
+                {user &&
+                    user.id !== blog.user_id &&
+                    (following ? (
+                        <button
+                            className="actionButton followingIndicator active"
+                            title="Following — click to unfollow"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                followAuthor(blog.user_id);
+                            }}
+                        >
+                            <LuUserCheck />
+                        </button>
+                    ) : (
+                        <button
+                            className="followButton"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                followAuthor(blog.user_id);
+                            }}
+                        >
+                            <LuUserPlus /> Follow
+                        </button>
+                    ))}
             </div>
             {blog.cover && (
                 <img className="blogCardCover" src={blog.cover} alt="" />

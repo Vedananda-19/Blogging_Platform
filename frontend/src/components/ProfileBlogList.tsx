@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { LuArrowLeft } from "react-icons/lu";
-import useUserBlogs, { type FullList } from "../hooks/useUserBlogs";
+import useUserLists, { type FullList } from "../hooks/useUserLists";
 import BlogCard from "./BlogCard";
 
 type Props = {
@@ -19,7 +19,7 @@ const ProfileBlogList = ({
     editable,
 }: Props) => {
     const navigate = useNavigate();
-    const hook = useUserBlogs(which);
+    const hook = useUserLists(which);
     const { likedSet, dislikedSet, savedSet, commentedSet } = hook;
     const query = hook[which];
     const blogs = query.data ?? [];

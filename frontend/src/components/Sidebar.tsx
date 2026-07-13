@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import {
     LuNewspaper,
+    LuUsers,
     LuFileText,
     LuThumbsUp,
     LuBookmark,
@@ -13,6 +14,7 @@ type Item = { to: string; label: string; icon: IconType; end?: boolean };
 
 const TOP: Item[] = [
     { to: "/blogs", label: "View Blogs", icon: LuNewspaper },
+    { to: "/following", label: "Following", icon: LuUsers },
     { to: "/profile/blogs", label: "Your Blogs", icon: LuFileText },
     { to: "/profile/liked", label: "Liked Blogs", icon: LuThumbsUp },
     { to: "/profile/saved", label: "Saved Blogs", icon: LuBookmark },

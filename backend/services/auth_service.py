@@ -87,6 +87,8 @@ def set_refresh_cookie(response: Response, token: str):
         secure=True,
         path="/auth",
         max_age=30 * 24 * 60 * 60,
+        partitioned=True,  # CHIPS: keeps the cross-site cookie working under
+        # third-party-cookie blocking (frontend + backend on different domains)
     )
 
 

@@ -1,0 +1,108 @@
+import BlogCard from "../components/BlogCard";
+import { useEffect, useRef } from "react";
+import useUserLists from "../hooks/useUserLists";
+import { useSearchParams } from "react-router-dom";
+import {type QueryData } from "../hooks/useBlogs";
+
+type Props = {
+    query: QueryData;
+    isFollowing?: boolean;
+    title?: string;
+    emptyText?: string;
+};
+
+const QueryBlogList = ({ query, isFollowing = false, title, emptyText }: Props) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        isFetchingNextPage,
+        hasNextPage,
+    } = query;
+
+    const { likedSet, dislikedSet, savedSet, commentedSet, followingSet } =
+        useUserLists();
+
+    const updateParams = (name: string, value?: string) => {
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
+            if (value) {
+                params.set(name, value);
+            } else {
+                params.delete(name);
+            }
+            return params;
+        });
+    };
+
+    useEffect(() => {
+        const el = bottomRef.current;
+        if (!el || !hasNextPage) return;
+        const observer = new IntersectionObserver((entries) => {
+            if (
+                entries[0].isIntersecting &&
+                hasNextPage &&
+                !isFetchingNextPage
+            ) {
+                fetchNextPage();
+            }
+        });
+        observer.observe(el);
+
+        return () => observer.disconnect();
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    return (
+        <div className="blogsPage">
+            <h1>{title ?? (isFollowing ? "Following" : "Blogs")}</h1>
+            <div className="blogControls">
+                <input
+                    value={searchParams.get("search") || ""}
+                    placeholder="Search posts..."
+                    onChange={(e) => updateParams("search", e.target.value)}
+                />
+                <select
+                    value={searchParams.get("sort") || "recent"}
+                    onChange={(e) => updateParams("sort", e.target.value)}
+                >
+                    <option value="recent">Recent</option>
+                    <option value="top">Top</option>
+                </select>
+            </div>
+
+            {isLoading && <p>Loading blogs...</p>}
+            {isError && <p className="errorMessage">Failed to load blogs.</p>}
+            {!isLoading && data?.pages[0].blogs.length === 0 && (
+                <p>
+                    {emptyText ?? (isFollowing
+                        ? "No blogs from people you follow yet."
+                        : "No blogs yet.")}
+                </p>
+            )}
+
+            <div className="blogList">
+                {data?.pages.map((page) =>
+                    page.blogs.map((blog) => (
+                        <BlogCard
+                            key={blog.id}
+                            blog={blog}
+                            liked={likedSet.has(blog.id)}
+                            disliked={dislikedSet.has(blog.id)}
+                            saved={savedSet.has(blog.id)}
+                            commented={commentedSet.has(blog.id)}
+                            following={followingSet.has(blog.user_id)}
+                        />
+                    )),
+                )}
+                {isFetchingNextPage && <p>fetching...</p>}
+                <div ref={bottomRef} className="loadSentinel" />
+            </div>
+        </div>
+    );
+};
+
+export default QueryBlogList;

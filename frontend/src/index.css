@@ -239,7 +239,7 @@ input::placeholder { color: var(--color-text-secondary); }
   display: grid;
   gap: 1.25rem;
   width: 100%;
-  max-width: 680px;
+  max-width: 740px;
   margin-top: 1rem;
 }
 
@@ -401,7 +401,7 @@ input::placeholder { color: var(--color-text-secondary); }
   display: flex;
   gap: .6rem;
   width: 100%;
-  max-width: 680px;
+  max-width: 740px;
   margin-top: 1rem;
 }
 
@@ -839,7 +839,7 @@ input::placeholder { color: var(--color-text-secondary); }
    ============================================================ */
 
 .profilePage {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
   display: flex;
@@ -852,7 +852,7 @@ input::placeholder { color: var(--color-text-secondary); }
 
 .profileHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.25rem;
   flex-wrap: wrap;
   background: var(--color-surface);
@@ -882,6 +882,11 @@ input::placeholder { color: var(--color-text-secondary); }
 .profileInfo { flex: 1; min-width: 0; }
 .profileInfo h1 { color: var(--color-text-primary); font-size: 1.5rem; }
 .profileHandle { color: var(--color-text-secondary); font-size: .9rem; }
+.profileStats { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: .6rem; color: var(--color-text-secondary); font-size: .9rem; }
+.profileStats strong { color: var(--color-text-primary); }
+.statDivider { width: 1px; align-self: stretch; min-height: 1rem; background: var(--color-border); }
+.authorLink { cursor: pointer; }
+.authorLink:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; border-radius: .35rem; }
 
 .profileEditButton {
   display: inline-flex;
@@ -1031,7 +1036,7 @@ input::placeholder { color: var(--color-text-secondary); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  height: 64px;
   padding: 0 1.25rem;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
@@ -1217,11 +1222,11 @@ input::placeholder { color: var(--color-text-secondary); }
   margin: .5rem 0 1.25rem;
 }
 
-.profileHeaderActions { display: flex; gap: .6rem; flex-wrap: wrap; }
+.profileHeaderActions { display: flex; gap: .6rem; flex-wrap: wrap; margin-left: auto; align-self: flex-start; }
 
 /* Blogs feed: align content to the sidebar layout (top-aligned column) */
 .blogsPage {
-  max-width: 680px;
+  max-width: 740px;
   margin: 0 auto;
   padding: 1.75rem 1.25rem 4rem;
   display: flex;
@@ -1230,3 +1235,214 @@ input::placeholder { color: var(--color-text-secondary); }
   text-align: left;
 }
 .blogsPage h1 { margin-bottom: .25rem; }
+
+/* Follow button (blog card + detail author row) */
+.followButton {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-brand);
+  background: transparent;
+  color: var(--color-brand);
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.followButton:hover { background: var(--color-brand-subtle); }
+.followButton.active {
+  background: var(--color-brand);
+  color: var(--color-surface);
+  border-color: var(--color-brand);
+}
+
+/* Blogs/Following: feed + author sidebar layout */
+.blogsLayout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 1rem;
+}
+.blogsLayout .blogsPage { margin: 0; }
+
+.authorSidebar {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1.75rem 0;
+}
+.authorSidebar h3 {
+  font-size: .9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: .25rem;
+}
+@media (max-width: 900px) { .authorSidebar { display: none; } }
+
+/* Author item — card (sidebar) + row (profile) variants */
+.authorItem { display: flex; align-items: center; gap: .6rem; text-align: left; }
+.authorItemCard {
+  width: 100%;
+  padding: .55rem .7rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .6rem;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.authorItemCard:hover { border-color: var(--color-brand); }
+.authorItemRow {
+  width: 100%;
+  justify-content: space-between;
+  padding: .55rem .3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.authorItemMain {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  flex: 1;
+  text-align: left;
+}
+.authorItemAvatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.authorItemName { font-weight: 600; font-size: .9rem; color: var(--color-text-primary); }
+.authorItemMuted { color: var(--color-text-secondary); font-size: .85rem; padding: .5rem 0; }
+
+/* Following dropdown (profile page) */
+.followingSection { display: flex; flex-direction: column; gap: .5rem; }
+.followingToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .7rem .9rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .6rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+.followingToggle span { display: inline-flex; align-items: center; gap: .5rem; }
+.followingToggle:hover { border-color: var(--color-brand); }
+.followingList {
+  display: flex;
+  flex-direction: column;
+  padding: 0 .75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .6rem;
+}
+.followingList .authorItemRow:last-child { border-bottom: none; }
+
+/* Compact "following" indicator on blog cards — an icon (no text) */
+.followingIndicator { margin-left: auto; }
+
+/* Comment footer: date + like button */
+.commentFooter { display: flex; align-items: center; gap: .85rem; margin-top: .3rem; }
+.commentLikeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: .8rem;
+  cursor: pointer;
+  padding: 0;
+}
+.commentLikeButton:hover { color: var(--color-brand); }
+
+/* Navbar logo image */
+.navLogoImg { height: 48px; width: auto; display: block; }
+
+.commentLikeButton.active { color: var(--color-brand); }
+
+/* ============================================================
+   LIGHT THEME (applied when <html data-theme="light">)
+   ============================================================ */
+:root[data-theme="light"] {
+  --color-brand:           #6366f1;
+  --color-brand-hover:     #4f46e5;
+  --color-brand-subtle:    #e0e7ff;
+  --color-danger:          #e11d48;
+  --color-page-bg:         #f5f6fb;
+  --color-surface:         #ffffff;
+  --color-border:          #e3e6ef;
+  --color-border-soft:     #d5d9e4;
+  --color-border-inner:    #e8eaf2;
+  --color-text-primary:    #1a1b2e;
+  --color-text-secondary:  #5b6472;
+  --color-text-tertiary:   #6b7280;
+  --color-surface-hover:   #eef0f7;
+  --shadow-card:    0 5px 18px rgba(20, 20, 40, 0.08);
+}
+
+/* Settings page */
+.settingsCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .85rem;
+  padding: 1.25rem 1.5rem;
+}
+.settingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.settingLabel { font-weight: 700; color: var(--color-text-primary); }
+.settingHint { color: var(--color-text-secondary); font-size: .85rem; margin-top: .2rem; }
+.themeToggle {
+  display: flex;
+  gap: .25rem;
+  padding: .25rem;
+  background: var(--color-page-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+.themeOption {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .4rem .85rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.themeOption.active {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-card);
+}
+
+/* Very light white border around images */
+.blogCardCover,
+.blogDetailCover,
+.navAvatar,
+.authorItemAvatar,
+.authorPhoto img,
+.profileAvatar img,
+.authorPhoto > img {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}

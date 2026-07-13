@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import or_
+from sqlalchemy import or_, join
 from models import (
     CreateBlogModel,
     CurrentUser,
@@ -12,6 +12,7 @@ from models import (
     BlogSaves,
     CommentOut,
     PaginatedComments,
+    Follows,
 )
 from fastapi import HTTPException, UploadFile
 from datetime import datetime
@@ -32,7 +33,9 @@ def create_blog(blogData: CreateBlogModel, db: Session, user: CurrentUser):
     return {"message": "Blog Added Successfully"}
 
 
-def update_blog(blog_id: str, blogData: CreateBlogModel, db: Session, user: CurrentUser):
+def update_blog(
+    blog_id: str, blogData: CreateBlogModel, db: Session, user: CurrentUser
+):
     blog = db.get(Blogs, blog_id)
     if not blog:
         raise HTTPException(404, "Blog not found")
@@ -54,20 +57,14 @@ def delete_blog(blog_id: str, db: Session, user: CurrentUser):
     if blog.user_id != user.user_id:
         raise HTTPException(403, "You can only delete your own blogs")
 
-    # No cascade is configured and likes/comments/saves reference blog_id, so
-    # remove dependent rows explicitly to avoid orphans / FK errors. Use bulk
-    # deletes throughout (including the blog itself) so SQLAlchemy doesn't try
-    # to NULL out the non-nullable blog_id PKs via ORM relationship handling.
     comment_ids = [
         r[0]
-        for r in db.query(BlogComments.id)
-        .filter(BlogComments.blog_id == blog_id)
-        .all()
+        for r in db.query(BlogComments.id).filter(BlogComments.blog_id == blog_id).all()
     ]
     if comment_ids:
-        db.query(CommentLikes).filter(
-            CommentLikes.comment_id.in_(comment_ids)
-        ).delete(synchronize_session=False)
+        db.query(CommentLikes).filter(CommentLikes.comment_id.in_(comment_ids)).delete(
+            synchronize_session=False
+        )
     db.query(BlogComments).filter(BlogComments.blog_id == blog_id).delete(
         synchronize_session=False
     )
@@ -82,11 +79,26 @@ def delete_blog(blog_id: str, db: Session, user: CurrentUser):
     return {"message": "Blog Deleted Successfully"}
 
 
-def get_blogs(cursor: datetime | None, limit: int, search: str, sort: str, db: Session):
+def get_blogs(
+    cursor: datetime | None,
+    limit: int,
+    search: str,
+    sort: str,
+    db: Session,
+    user: CurrentUser = None,
+    following=False,
+    author: str | None = None,
+):
     # Querying
     blogs_query = db.query(Blogs)
 
     # Filtering
+    if following:
+        blogs_query = blogs_query.join(
+            Follows, Blogs.user_id == Follows.author_id
+        ).filter(Follows.user_id == user.user_id)
+    if author:
+        blogs_query = blogs_query.filter(Blogs.user_id == author)
     blogs_query = blogs_query.filter(
         or_(Blogs.title.ilike(f"%{search}%"), Blogs.content.ilike(f"%{search}%"))
     )
@@ -255,7 +267,7 @@ async def upload_image(file: UploadFile):
         raise HTTPException(400, "The file should be an image")
     MAX_FILE_MB = 5  # (Cloudinary isnt allowing more)
     contents = await file.read()
-    if len(contents) > MAX_FILE_MB*1024*1024:
+    if len(contents) > MAX_FILE_MB * 1024 * 1024:
         raise HTTPException(413, f"File Size must be less than {MAX_FILE_MB}MB")
 
     result = upload(contents, folder="blog_images")
