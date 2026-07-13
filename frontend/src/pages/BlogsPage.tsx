@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import useBlogs from "../hooks/useBlogs";
 import useFollowingBlogs from "../hooks/useFollowingBlogs";
@@ -8,9 +9,18 @@ import useTopUsers from "../hooks/useTopUsers";
 import AuthorDetailsItem from "../components/AuthorDetailsItem";
 
 const BlogsPage = () => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const location = useLocation();
     const isFollowing = location.pathname.endsWith("/following");
+
+    // The main blogs feed defaults to "top" (the following feed keeps "recent").
+    useEffect(() => {
+        if (!isFollowing && !searchParams.get("sort")) {
+            const params = new URLSearchParams(searchParams);
+            params.set("sort", "top");
+            setSearchParams(params, { replace: true });
+        }
+    }, [isFollowing, searchParams, setSearchParams]);
 
     // Both hooks are always called (Rules of Hooks); only the active one is enabled.
     const blogsQuery = useBlogs(searchParams, !isFollowing);

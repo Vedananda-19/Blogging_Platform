@@ -59,7 +59,7 @@ def get_top_users(db: Session) -> list[str]:
         for uid, followers, posts, likes in rows
     ]
     scored.sort(key=lambda x: x[1], reverse=True)
-    return [uid for uid, _ in scored[:10]]
+    return [uid for uid, _ in scored[:6]]
 
 
 def get_following_ids(db: Session, user: CurrentUser):

@@ -27,37 +27,37 @@ def edit_profile(
 
 
 @user_router.get("/liked-blogs", response_model=list[BlogOut])
-def liked_blogs_full(db: db_dependency, user: user_dependency):
+def liked_blogs(db: db_dependency, user: user_dependency):
     return user_service.get_liked_blogs(db, user)
 
 
 @user_router.get("/saved-blogs", response_model=list[BlogOut])
-def saved_blogs_full(db: db_dependency, user: user_dependency):
+def saved_blogs(db: db_dependency, user: user_dependency):
     return user_service.get_saved_blogs(db, user)
 
 
 @user_router.get("/commented-blogs", response_model=list[BlogOut])
-def commented_blogs_full(db: db_dependency, user: user_dependency):
+def commented_blogs(db: db_dependency, user: user_dependency):
     return user_service.get_commented_blogs(db, user)
 
 
 @user_router.get("/liked")
-def liked_blogs(db: db_dependency, user: user_dependency):
+def liked_blog_ids(db: db_dependency, user: user_dependency):
     return user_service.get_liked_blog_ids(db, user)
 
 
 @user_router.get("/disliked")
-def disliked_blogs(db: db_dependency, user: user_dependency):
+def disliked_blog_ids(db: db_dependency, user: user_dependency):
     return user_service.get_disliked_blog_ids(db, user)
 
 
 @user_router.get("/saved")
-def saved_blogs(db: db_dependency, user: user_dependency):
+def saved_blog_ids(db: db_dependency, user: user_dependency):
     return user_service.get_saved_blog_ids(db, user)
 
 
 @user_router.get("/commented")
-def commented_blogs(db: db_dependency, user: user_dependency):
+def commented_blog_ids(db: db_dependency, user: user_dependency):
     return user_service.get_commented_blog_ids(db, user)
 
 
