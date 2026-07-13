@@ -140,7 +140,7 @@ docker compose --env-file backend/.env up --build
 - JWT authentication with refresh-token rotation and a single-flight refresh interceptor
 - Google OAuth integration
 - Cursor-based pagination and infinite queries
-- Managing server state and caching with TanStack Query
+- Managing server state and caching with React Query
 - Optimistic UI updates
 - Cloud image handling with Cloudinary
 - Containerising and deploying frontend & backend independently (Vercel + Render)
