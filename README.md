@@ -14,7 +14,7 @@ A full-stack blogging platform where people write rich posts, react and discuss,
 
 - Secure registration & login with JWT + Google Sign-In
 - Rich-text blog editor (TipTap) with image uploads
-- Create, edit, and delete your own posts (owner-only, enforced server-side)
+- Create, edit, and delete your own posts
 - Blog feed with Searching, Sorting & Infinite Scroll
 - Likes / dislikes, saves, and comments
 - Following feed, Dedicated author pages & Top Authors
